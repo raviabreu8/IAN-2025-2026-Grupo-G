@@ -152,12 +152,17 @@ public class App {
                 }
 
                 if (valid) {
+                    AlgorithmConfiguration config = new AlgorithmConfiguration(
+                            algorithm,
+                            populationSize,
+                            maxEvaluations,
+                            crossoverProbability,
+                            mutationProbability
+                    );
+
                     System.out.println("Resposta validada com sucesso.");
-                    System.out.println("Algoritmo escolhido: " + algorithm);
-                    System.out.println("Population size: " + populationSize);
-                    System.out.println("Max evaluations: " + maxEvaluations);
-                    System.out.println("Crossover probability: " + crossoverProbability);
-                    System.out.println("Mutation probability: " + mutationProbability);
+                    System.out.println("Configuração criada:");
+                    System.out.println(config);
                 }
             }
 
