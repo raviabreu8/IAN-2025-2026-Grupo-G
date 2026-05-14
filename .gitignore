@@ -1,0 +1,27 @@
+# Sistema operativo
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/
+
+# Java / Maven
+target/
+*.class
+
+# Logs
+*.log
+
+# Variáveis locais
+.env
+
+# Ficheiros temporários
+tmp/
+temp/
+
+# Datasets grandes ou comprimidos
+data/raw/
+*.zip
+*.rar
+*.7z
