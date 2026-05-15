@@ -16,7 +16,10 @@ public class App {
             PromptBuilder promptBuilder = new PromptBuilder(algorithmCatalog);
 
             String systemPrompt = promptBuilder.buildSystemPrompt();
-            String userPrompt = promptBuilder.buildAlgorithmRecommendationPrompt();
+            ProblemDescriptionLoader problemLoader = new ProblemDescriptionLoader();
+            String problemDescriptionJson = problemLoader.loadProblemDescription();
+
+            String userPrompt = promptBuilder.buildAlgorithmRecommendationPrompt(problemDescriptionJson);
 
             String llmResponse = ollamaClient.generateResponse(systemPrompt, userPrompt);
 
@@ -26,6 +29,7 @@ public class App {
             AlgorithmRecommendationValidator validator = new AlgorithmRecommendationValidator(algorithmCatalog);
 
             AlgorithmConfiguration config;
+            String finalLlmResponse = llmResponse;
 
             try {
                 config = validator.validateAndCreateConfiguration(llmResponse);
@@ -44,6 +48,7 @@ public class App {
                 System.out.println("Resposta corrigida do LLM:");
                 System.out.println(correctedResponse);
 
+                finalLlmResponse = correctedResponse;
                 config = validator.validateAndCreateConfiguration(correctedResponse);
             }
 
@@ -58,7 +63,7 @@ public class App {
             System.out.println(result);
 
             ExecutionReportWriter reportWriter = new ExecutionReportWriter();
-            reportWriter.write(config, result);
+            reportWriter.write(config, result, finalLlmResponse);
 
         } catch (Exception e) {
             System.out.println("Erro na aplicação:");

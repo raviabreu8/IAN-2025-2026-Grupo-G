@@ -13,7 +13,7 @@ public class PromptBuilder {
                 "Responde sempre em JSON válido. Não escrevas texto fora do JSON.";
     }
 
-    public String buildAlgorithmRecommendationPrompt() {
+    public String buildAlgorithmRecommendationPrompt(String problemDescriptionJson) {
         StringBuilder algorithmsDescription = new StringBuilder();
 
         for (AlgorithmCatalog.AlgorithmInfo algorithm : algorithmCatalog.getAlgorithms()) {
@@ -30,27 +30,16 @@ public class PromptBuilder {
         }
 
         return """
-                Analisa o seguinte problema de otimização:
+                A aplicação vai enviar-te uma descrição estruturada de um problema de otimização em JSON.
 
-                Tipo de problema: timetabling universitário
-                Descrição: alocação de aulas a salas e horários.
-
-                Objetivos:
-                - minimizar conflitos de horários
-                - minimizar conflitos de professores
-                - maximizar uso adequado da capacidade das salas
-                - minimizar penalizações por violações de restrições
-
-                Restrições:
-                - um professor não pode estar em duas aulas ao mesmo tempo
-                - uma sala não pode ter duas aulas ao mesmo tempo
-                - a capacidade da sala deve ser suficiente para a turma
-                - aulas da mesma turma não devem sobrepor-se
+                Descrição do problema:
+                %s
 
                 Catálogo de algoritmos conhecidos pela aplicação:
                 %s
 
-                Escolhe exatamente UM algoritmo principal.
+                Tarefa:
+                Analisa o problema de otimização e recomenda exatamente UM algoritmo principal.
 
                 Regras importantes:
                 - Recomenda apenas algoritmos presentes no catálogo.
@@ -61,26 +50,26 @@ public class PromptBuilder {
 
                 Responde obrigatoriamente neste formato JSON:
                 {
-                  "task": "algorithm_recommendation",
-                  "problem_type": "timetabling",
-                  "recommended_algorithm": "nome_exato_do_algoritmo",
-                  "justification": "explicação curta",
-                  "parameters": {
+                "task": "algorithm_recommendation",
+                "problem_type": "timetabling",
+                "recommended_algorithm": "nome_exato_do_algoritmo",
+                "justification": "explicação curta",
+                "parameters": {
                     "population_size": 100,
                     "max_evaluations": 25000,
                     "crossover_probability": 0.9,
                     "mutation_probability": 0.01
-                  },
-                  "alternatives": [
+                },
+                "alternatives": [
                     {
-                      "algorithm": "nome",
-                      "reason_not_selected": "explicação curta"
+                    "algorithm": "nome",
+                    "reason_not_selected": "explicação curta"
                     }
-                  ]
+                ]
                 }
-                """.formatted(algorithmsDescription.toString());
+                """.formatted(problemDescriptionJson, algorithmsDescription.toString());
     }
-
+    
     public String buildCorrectionPrompt(String previousResponse, String validationError) {
         StringBuilder algorithmsDescription = new StringBuilder();
 

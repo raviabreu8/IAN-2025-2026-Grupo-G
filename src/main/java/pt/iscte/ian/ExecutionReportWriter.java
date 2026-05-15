@@ -1,5 +1,6 @@
 package pt.iscte.ian;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -11,13 +12,20 @@ public class ExecutionReportWriter {
 
     private final ObjectMapper mapper = new ObjectMapper();
 
-    public void write(AlgorithmConfiguration config, OptimizationResult result) throws Exception {
+    public void write(
+            AlgorithmConfiguration config,
+            OptimizationResult result,
+            String finalLlmResponse
+    ) throws Exception {
         Path outputDirectory = Path.of("outputs");
         Files.createDirectories(outputDirectory);
 
         ObjectNode report = mapper.createObjectNode();
 
         report.put("generated_at", LocalDateTime.now().toString());
+
+        JsonNode llmRecommendationNode = mapper.readTree(finalLlmResponse);
+        report.set("llm_recommendation", llmRecommendationNode);
 
         ObjectNode configurationNode = mapper.createObjectNode();
         configurationNode.put("algorithm", config.getAlgorithm());

@@ -1,0 +1,49 @@
+{
+  "task": "recommend_optimization_algorithm",
+  "problem": {
+    "type": "timetabling",
+    "description": "Alocação de aulas a salas e horários num contexto universitário.",
+    "domain": "university_scheduling",
+    "objectives": [
+      {
+        "name": "minimize_schedule_conflicts",
+        "description": "Minimizar conflitos de horários entre aulas, professores, salas e turmas."
+      },
+      {
+        "name": "minimize_teacher_conflicts",
+        "description": "Evitar que o mesmo professor esteja associado a duas aulas no mesmo horário."
+      },
+      {
+        "name": "maximize_room_capacity_usage",
+        "description": "Utilizar salas com capacidade adequada ao número de estudantes."
+      },
+      {
+        "name": "minimize_constraint_violations",
+        "description": "Reduzir penalizações associadas à violação de restrições fortes e fracas."
+      }
+    ],
+    "constraints": [
+      {
+        "name": "no_teacher_overlap",
+        "type": "hard",
+        "description": "Um professor não pode estar em duas aulas ao mesmo tempo."
+      },
+      {
+        "name": "no_room_overlap",
+        "type": "hard",
+        "description": "Uma sala não pode ter duas aulas ao mesmo tempo."
+      },
+      {
+        "name": "room_capacity_must_be_sufficient",
+        "type": "hard",
+        "description": "A capacidade da sala deve ser suficiente para a turma."
+      },
+      {
+        "name": "no_class_overlap_for_same_group",
+        "type": "hard",
+        "description": "Aulas da mesma turma ou grupo não devem sobrepor-se."
+      }
+    ]
+  },
+  "framework": "JMetal 6.1"
+}

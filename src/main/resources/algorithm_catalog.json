@@ -1,0 +1,35 @@
+{
+  "algorithms": [
+    {
+      "name": "NSGA-II",
+      "framework": "JMetal 6.1",
+      "implemented": true,
+      "description": "Algoritmo multiobjetivo baseado em ordenação não-dominada, adequado para problemas com vários objetivos e restrições.",
+      "suitable_for": [
+        "multiobjective_optimization",
+        "constrained_optimization",
+        "timetabling"
+      ]
+    },
+    {
+      "name": "NSGA-III",
+      "framework": "JMetal 6.1",
+      "implemented": false,
+      "description": "Algoritmo multiobjetivo indicado para problemas com muitos objetivos.",
+      "suitable_for": [
+        "many_objective_optimization",
+        "multiobjective_optimization"
+      ]
+    },
+    {
+      "name": "MOEA/D",
+      "framework": "JMetal 6.1",
+      "implemented": false,
+      "description": "Algoritmo multiobjetivo baseado em decomposição do problema em subproblemas.",
+      "suitable_for": [
+        "multiobjective_optimization",
+        "decomposition_based_optimization"
+      ]
+    }
+  ]
+}
