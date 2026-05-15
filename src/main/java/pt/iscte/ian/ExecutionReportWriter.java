@@ -42,11 +42,26 @@ public class ExecutionReportWriter {
         report.set("configuration", configurationNode);
         report.set("result", resultNode);
 
-        Path outputFile = outputDirectory.resolve("last_execution.json");
+        Path lastExecutionFile = outputDirectory.resolve("last_execution.json");
 
-        mapper.writerWithDefaultPrettyPrinter().writeValue(outputFile.toFile(), report);
+        mapper.writerWithDefaultPrettyPrinter().writeValue(lastExecutionFile.toFile(), report);
+
+        Path historyDirectory = outputDirectory.resolve("history");
+        Files.createDirectories(historyDirectory);
+
+        String timestamp = LocalDateTime.now()
+                .toString()
+                .replace(":", "-")
+                .replace(".", "-");
+
+        Path historyFile = historyDirectory.resolve("execution_" + timestamp + ".json");
+
+        mapper.writerWithDefaultPrettyPrinter().writeValue(historyFile.toFile(), report);
 
         System.out.println("Relatório de execução guardado em:");
-        System.out.println(outputFile.toAbsolutePath());
+        System.out.println(lastExecutionFile.toAbsolutePath());
+
+        System.out.println("Cópia histórica guardada em:");
+        System.out.println(historyFile.toAbsolutePath());
     }
 }
