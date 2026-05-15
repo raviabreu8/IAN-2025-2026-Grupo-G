@@ -6,50 +6,76 @@ public class App {
         System.out.println("A pedir recomendação de algoritmo ao LLM...");
 
         try {
+            ApplicationConfigLoader configLoader = new ApplicationConfigLoader();
+            ApplicationConfig applicationConfig = configLoader.load();
+
+            System.out.println("Configuração da aplicação carregada:");
+            System.out.println(applicationConfig);
+
             OllamaClient ollamaClient = new OllamaClient(
-                    "http://localhost:11434/api/generate",
-                    "llama3.2:3b"
+                    applicationConfig.getOllamaApiUrl(),
+                    applicationConfig.getOllamaModel()
             );
 
             AlgorithmCatalog algorithmCatalog = new AlgorithmCatalog();
 
             PromptBuilder promptBuilder = new PromptBuilder(algorithmCatalog);
 
-            String systemPrompt = promptBuilder.buildSystemPrompt();
             ProblemDescriptionLoader problemLoader = new ProblemDescriptionLoader();
             String problemDescriptionJson = problemLoader.loadProblemDescription();
 
+            String systemPrompt = promptBuilder.buildSystemPrompt();
             String userPrompt = promptBuilder.buildAlgorithmRecommendationPrompt(problemDescriptionJson);
 
+            AlgorithmRecommendationValidator validator = new AlgorithmRecommendationValidator(algorithmCatalog);
+
             String llmResponse = ollamaClient.generateResponse(systemPrompt, userPrompt);
+            String finalLlmResponse = llmResponse;
 
             System.out.println("Resposta JSON do LLM:");
             System.out.println(llmResponse);
 
-            AlgorithmRecommendationValidator validator = new AlgorithmRecommendationValidator(algorithmCatalog);
+            AlgorithmConfiguration config = null;
 
-            AlgorithmConfiguration config;
-            String finalLlmResponse = llmResponse;
+            int correctionAttempt = 0;
+            int maxCorrectionAttempts = applicationConfig.getMaxCorrectionAttempts();
 
-            try {
-                config = validator.validateAndCreateConfiguration(llmResponse);
-            } catch (Exception validationException) {
-                System.out.println("Resposta inicial inválida.");
-                System.out.println("Erro encontrado: " + validationException.getMessage());
-                System.out.println("A pedir correção ao LLM...");
+            while (config == null) {
+                try {
+                    config = validator.validateAndCreateConfiguration(finalLlmResponse);
+                } catch (Exception validationException) {
+                    if (correctionAttempt >= maxCorrectionAttempts) {
+                        throw new RuntimeException(
+                                "Não foi possível obter uma resposta válida do LLM após "
+                                        + maxCorrectionAttempts
+                                        + " tentativa(s) de correção. Último erro: "
+                                        + validationException.getMessage(),
+                                validationException
+                        );
+                    }
 
-                String correctionPrompt = promptBuilder.buildCorrectionPrompt(
-                        llmResponse,
-                        validationException.getMessage()
-                );
+                    correctionAttempt++;
 
-                String correctedResponse = ollamaClient.generateResponse(systemPrompt, correctionPrompt);
+                    System.out.println("Resposta inválida recebida do LLM.");
+                    System.out.println("Erro encontrado: " + validationException.getMessage());
+                    System.out.println("A pedir correção ao LLM. Tentativa "
+                            + correctionAttempt
+                            + " de "
+                            + maxCorrectionAttempts
+                            + "...");
 
-                System.out.println("Resposta corrigida do LLM:");
-                System.out.println(correctedResponse);
+                    String correctionPrompt = promptBuilder.buildCorrectionPrompt(
+                            finalLlmResponse,
+                            validationException.getMessage()
+                    );
 
-                finalLlmResponse = correctedResponse;
-                config = validator.validateAndCreateConfiguration(correctedResponse);
+                    String correctedResponse = ollamaClient.generateResponse(systemPrompt, correctionPrompt);
+
+                    System.out.println("Resposta corrigida do LLM:");
+                    System.out.println(correctedResponse);
+
+                    finalLlmResponse = correctedResponse;
+                }
             }
 
             System.out.println("Resposta validada com sucesso.");
