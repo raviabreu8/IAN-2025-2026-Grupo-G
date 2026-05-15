@@ -12,7 +12,7 @@ import java.util.List;
 
 public class JMetalNsgaIIRunner {
 
-    public void run(AlgorithmConfiguration config) {
+    public OptimizationResult run(AlgorithmConfiguration config) {
         System.out.println("A executar NSGA-II real com JMetal no problema de teste ZDT1...");
 
         Problem<DoubleSolution> problem = new ZDT1();
@@ -37,9 +37,12 @@ public class JMetalNsgaIIRunner {
 
         List<DoubleSolution> result = algorithm.result();
 
+        long executionTime = endTime - startTime;
+        int numberOfSolutions = result.size();
+
         System.out.println("NSGA-II terminou a execução.");
-        System.out.println("Tempo de execução: " + (endTime - startTime) + " ms");
-        System.out.println("Número de soluções obtidas: " + result.size());
+        System.out.println("Tempo de execução: " + executionTime + " ms");
+        System.out.println("Número de soluções obtidas: " + numberOfSolutions);
 
         System.out.println("Primeiras soluções encontradas:");
 
@@ -54,5 +57,11 @@ public class JMetalNsgaIIRunner {
                             ", f2 = " + solution.objectives()[1]
             );
         }
+
+        return new OptimizationResult(
+                config.getAlgorithm(),
+                executionTime,
+                numberOfSolutions
+        );
     }
 }

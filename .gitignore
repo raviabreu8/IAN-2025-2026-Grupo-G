@@ -25,3 +25,6 @@ data/raw/
 *.zip
 *.rar
 *.7z
+
+# Resultados gerados pela aplicação
+outputs/

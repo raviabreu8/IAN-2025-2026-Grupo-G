@@ -3,15 +3,13 @@ package pt.iscte.ian;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.util.List;
-
 public class AlgorithmRecommendationValidator {
 
-    private static final List<String> ALLOWED_ALGORITHMS = List.of(
-            "NSGA-II",
-            "NSGA-III",
-            "MOEA/D"
-    );
+    private final AlgorithmCatalog algorithmCatalog;
+
+    public AlgorithmRecommendationValidator(AlgorithmCatalog algorithmCatalog) {
+        this.algorithmCatalog = algorithmCatalog;
+    }
 
     public AlgorithmConfiguration validateAndCreateConfiguration(String llmResponse) throws Exception {
         ObjectMapper mapper = new ObjectMapper();
@@ -27,8 +25,14 @@ public class AlgorithmRecommendationValidator {
 
         String algorithm = recommendation.get("recommended_algorithm").asText();
 
-        if (!ALLOWED_ALGORITHMS.contains(algorithm)) {
-            throw new IllegalArgumentException("Algoritmo não permitido: " + algorithm);
+        if (!algorithmCatalog.isKnownAlgorithm(algorithm)) {
+            throw new IllegalArgumentException("Algoritmo desconhecido pela aplicação: " + algorithm);
+        }
+
+        if (!algorithmCatalog.isImplemented(algorithm)) {
+            throw new IllegalArgumentException(
+                    "Algoritmo conhecido, mas ainda não implementado nesta aplicação: " + algorithm
+            );
         }
 
         JsonNode parameters = recommendation.get("parameters");
