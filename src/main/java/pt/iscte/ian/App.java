@@ -31,6 +31,9 @@ public class App {
             OptimizationRunner runner = new OptimizationRunner();
             runner.execute(config);
 
+            JMetalSmokeTest smokeTest = new JMetalSmokeTest();
+            smokeTest.run();
+
         } catch (Exception e) {
             System.out.println("Erro na aplicação:");
             System.out.println(e.getMessage());

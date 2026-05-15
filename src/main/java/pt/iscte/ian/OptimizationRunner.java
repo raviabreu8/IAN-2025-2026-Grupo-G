@@ -16,8 +16,11 @@ public class OptimizationRunner {
     }
 
     private void executeNsgaII(AlgorithmConfiguration config) {
-        System.out.println("Executaria o algoritmo NSGA-II com os seguintes parâmetros:");
+        System.out.println("A executar o algoritmo NSGA-II com JMetal.");
         printConfiguration(config);
+
+        JMetalNsgaIIRunner nsgaIIRunner = new JMetalNsgaIIRunner();
+        nsgaIIRunner.run(config);
     }
 
     private void executeNsgaIII(AlgorithmConfiguration config) {
