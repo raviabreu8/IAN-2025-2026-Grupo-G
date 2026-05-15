@@ -15,7 +15,8 @@ public class ExecutionReportWriter {
     public void write(
             AlgorithmConfiguration config,
             OptimizationResult result,
-            String finalLlmResponse
+            String finalLlmResponse,
+            DatasetQualityReport datasetQualityReport
     ) throws Exception {
         Path outputDirectory = Path.of("outputs");
         Files.createDirectories(outputDirectory);
@@ -26,6 +27,16 @@ public class ExecutionReportWriter {
 
         JsonNode llmRecommendationNode = mapper.readTree(finalLlmResponse);
         report.set("llm_recommendation", llmRecommendationNode);
+
+        ObjectNode datasetNode = mapper.createObjectNode();
+        datasetNode.put("number_of_rooms", datasetQualityReport.getNumberOfRooms());
+        datasetNode.put("number_of_schedule_entries", datasetQualityReport.getNumberOfScheduleEntries());
+        datasetNode.put("number_of_distinct_rooms_used", datasetQualityReport.getNumberOfDistinctRoomsUsed());
+        datasetNode.put("entries_with_capacity_problem", datasetQualityReport.getEntriesWithCapacityProblem());
+        datasetNode.put("entries_without_room", datasetQualityReport.getEntriesWithoutRoom());
+        datasetNode.put("entries_with_unknown_room", datasetQualityReport.getEntriesWithUnknownRoom());
+
+        report.set("dataset_quality_report", datasetNode);
 
         ObjectNode configurationNode = mapper.createObjectNode();
         configurationNode.put("algorithm", config.getAlgorithm());

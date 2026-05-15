@@ -12,6 +12,25 @@ public class App {
             System.out.println("Configuração da aplicação carregada:");
             System.out.println(applicationConfig);
 
+            DatasetLoader datasetLoader = new DatasetLoader();
+            TimetablingDataset dataset = datasetLoader.loadTimetablingDataset();
+
+            System.out.println("Datasets carregados com sucesso.");
+            System.out.println("Número de salas: " + dataset.getRooms().size());
+            System.out.println("Número de entradas de horário: " + dataset.getScheduleEntries().size());
+
+            System.out.println("Primeira sala carregada:");
+            System.out.println(dataset.getRooms().get(0));
+
+            System.out.println("Primeira entrada de horário carregada:");
+            System.out.println(dataset.getScheduleEntries().get(0));
+
+            DatasetQualityAnalyzer qualityAnalyzer = new DatasetQualityAnalyzer();
+            DatasetQualityReport qualityReport = qualityAnalyzer.analyze(dataset);
+
+            System.out.println("Resumo de qualidade dos datasets:");
+            System.out.println(qualityReport);
+
             OllamaClient ollamaClient = new OllamaClient(
                     applicationConfig.getOllamaApiUrl(),
                     applicationConfig.getOllamaModel()
@@ -25,7 +44,7 @@ public class App {
             String problemDescriptionJson = problemLoader.loadProblemDescription();
 
             String systemPrompt = promptBuilder.buildSystemPrompt();
-            String userPrompt = promptBuilder.buildAlgorithmRecommendationPrompt(problemDescriptionJson);
+            String userPrompt = promptBuilder.buildAlgorithmRecommendationPrompt(problemDescriptionJson, qualityReport);
 
             AlgorithmRecommendationValidator validator = new AlgorithmRecommendationValidator(algorithmCatalog);
 
@@ -89,7 +108,7 @@ public class App {
             System.out.println(result);
 
             ExecutionReportWriter reportWriter = new ExecutionReportWriter();
-            reportWriter.write(config, result, finalLlmResponse);
+            reportWriter.write(config, result, finalLlmResponse, qualityReport);
 
         } catch (Exception e) {
             System.out.println("Erro na aplicação:");

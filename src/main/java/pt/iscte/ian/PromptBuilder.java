@@ -13,7 +13,10 @@ public class PromptBuilder {
                 "Responde sempre em JSON válido. Não escrevas texto fora do JSON.";
     }
 
-    public String buildAlgorithmRecommendationPrompt(String problemDescriptionJson) {
+   public String buildAlgorithmRecommendationPrompt(
+            String problemDescriptionJson,
+            DatasetQualityReport datasetQualityReport
+    ) {
         StringBuilder algorithmsDescription = new StringBuilder();
 
         for (AlgorithmCatalog.AlgorithmInfo algorithm : algorithmCatalog.getAlgorithms()) {
@@ -29,10 +32,30 @@ public class PromptBuilder {
                     .append("\n");
         }
 
+        String datasetSummary = """
+                Resumo dos datasets reais carregados:
+                - Número de salas: %d
+                - Número de entradas de horário: %d
+                - Número de salas distintas usadas no horário: %d
+                - Entradas com problema de capacidade: %d
+                - Entradas sem sala atribuída: %d
+                - Entradas com sala não encontrada no cadastro de salas: %d
+                """.formatted(
+                datasetQualityReport.getNumberOfRooms(),
+                datasetQualityReport.getNumberOfScheduleEntries(),
+                datasetQualityReport.getNumberOfDistinctRoomsUsed(),
+                datasetQualityReport.getEntriesWithCapacityProblem(),
+                datasetQualityReport.getEntriesWithoutRoom(),
+                datasetQualityReport.getEntriesWithUnknownRoom()
+        );
+
         return """
                 A aplicação vai enviar-te uma descrição estruturada de um problema de otimização em JSON.
 
                 Descrição do problema:
+                %s
+
+                Dados reais disponíveis:
                 %s
 
                 Catálogo de algoritmos conhecidos pela aplicação:
@@ -45,6 +68,7 @@ public class PromptBuilder {
                 - Recomenda apenas algoritmos presentes no catálogo.
                 - Dá preferência a algoritmos já implementados nesta aplicação.
                 - Só recomenda um algoritmo não implementado se houver uma razão técnica muito forte.
+                - Considera o resumo dos datasets reais na justificação da escolha.
                 - Responde apenas em JSON válido.
                 - Não escrevas texto fora do JSON.
 
@@ -53,7 +77,7 @@ public class PromptBuilder {
                 "task": "algorithm_recommendation",
                 "problem_type": "timetabling",
                 "recommended_algorithm": "nome_exato_do_algoritmo",
-                "justification": "explicação curta",
+                "justification": "explicação curta considerando o problema e os dados reais",
                 "parameters": {
                     "population_size": 100,
                     "max_evaluations": 25000,
@@ -67,7 +91,11 @@ public class PromptBuilder {
                     }
                 ]
                 }
-                """.formatted(problemDescriptionJson, algorithmsDescription.toString());
+                """.formatted(
+                problemDescriptionJson,
+                datasetSummary,
+                algorithmsDescription.toString()
+        );
     }
     
     public String buildCorrectionPrompt(String previousResponse, String validationError) {
