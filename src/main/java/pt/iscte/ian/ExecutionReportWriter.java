@@ -16,7 +16,8 @@ public class ExecutionReportWriter {
             AlgorithmConfiguration config,
             OptimizationResult result,
             String finalLlmResponse,
-            DatasetQualityReport datasetQualityReport
+            DatasetQualityReport datasetQualityReport,
+            TimetablingEvaluation timetablingEvaluation
     ) throws Exception {
         Path outputDirectory = Path.of("outputs");
         Files.createDirectories(outputDirectory);
@@ -38,6 +39,19 @@ public class ExecutionReportWriter {
 
         report.set("dataset_quality_report", datasetNode);
 
+        ObjectNode timetablingEvaluationNode = mapper.createObjectNode();
+        timetablingEvaluationNode.put("total_entries", timetablingEvaluation.getTotalEntries());
+        timetablingEvaluationNode.put("capacity_violations", timetablingEvaluation.getCapacityViolations());
+        timetablingEvaluationNode.put("missing_room_assignments", timetablingEvaluation.getMissingRoomAssignments());
+        timetablingEvaluationNode.put("unknown_room_assignments", timetablingEvaluation.getUnknownRoomAssignments());
+        timetablingEvaluationNode.put("room_time_conflicts", timetablingEvaluation.getRoomTimeConflicts());
+        timetablingEvaluationNode.put("total_penalty", timetablingEvaluation.getTotalPenalty());
+        timetablingEvaluationNode.put("capacity_violation_rate", timetablingEvaluation.getCapacityViolationRate());
+        timetablingEvaluationNode.put("missing_room_rate", timetablingEvaluation.getMissingRoomRate());
+        timetablingEvaluationNode.put("unknown_room_rate", timetablingEvaluation.getUnknownRoomRate());
+
+        report.set("timetabling_evaluation", timetablingEvaluationNode);
+        
         ObjectNode configurationNode = mapper.createObjectNode();
         configurationNode.put("algorithm", config.getAlgorithm());
         configurationNode.put("population_size", config.getPopulationSize());

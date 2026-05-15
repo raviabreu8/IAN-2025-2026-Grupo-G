@@ -31,6 +31,12 @@ public class App {
             System.out.println("Resumo de qualidade dos datasets:");
             System.out.println(qualityReport);
 
+            TimetablingEvaluator timetablingEvaluator = new TimetablingEvaluator();
+            TimetablingEvaluation timetablingEvaluation = timetablingEvaluator.evaluate(dataset);
+
+            System.out.println("Avaliação do horário atual:");
+            System.out.println(timetablingEvaluation);
+
             OllamaClient ollamaClient = new OllamaClient(
                     applicationConfig.getOllamaApiUrl(),
                     applicationConfig.getOllamaModel()
@@ -108,8 +114,7 @@ public class App {
             System.out.println(result);
 
             ExecutionReportWriter reportWriter = new ExecutionReportWriter();
-            reportWriter.write(config, result, finalLlmResponse, qualityReport);
-
+            reportWriter.write(config, result, finalLlmResponse, qualityReport, timetablingEvaluation);
         } catch (Exception e) {
             System.out.println("Erro na aplicação:");
             System.out.println(e.getMessage());
