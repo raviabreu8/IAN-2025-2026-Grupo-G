@@ -2,11 +2,15 @@ package pt.iscte.ian;
 
 public class OptimizationRunner {
 
-    public OptimizationResult execute(AlgorithmConfiguration config) {
+    public OptimizationResult execute(
+            AlgorithmConfiguration config,
+            TimetablingDataset dataset,
+            TimetablingOptimizationInstance optimizationInstance
+    ) {
         System.out.println("A preparar execução do algoritmo...");
 
         return switch (config.getAlgorithm()) {
-            case "NSGA-II" -> executeNsgaII(config);
+            case "NSGA-II" -> executeNsgaII(config, dataset, optimizationInstance);
             case "NSGA-III" -> executeNsgaIII(config);
             case "MOEA/D" -> executeMoead(config);
             default -> throw new IllegalArgumentException(
@@ -15,17 +19,25 @@ public class OptimizationRunner {
         };
     }
 
-    private OptimizationResult executeNsgaII(AlgorithmConfiguration config) {
+    private OptimizationResult executeNsgaII(
+            AlgorithmConfiguration config,
+            TimetablingDataset dataset,
+            TimetablingOptimizationInstance optimizationInstance
+    ) {
         System.out.println("A executar o algoritmo NSGA-II com JMetal.");
         printConfiguration(config);
 
-        JMetalNsgaIIRunner nsgaIIRunner = new JMetalNsgaIIRunner();
-        return nsgaIIRunner.run(config);
+        JMetalTimetablingNsgaIIRunner runner = new JMetalTimetablingNsgaIIRunner();
+
+        return runner.run(
+                config,
+                dataset,
+                optimizationInstance
+        );
     }
 
     private OptimizationResult executeNsgaIII(AlgorithmConfiguration config) {
         System.out.println("NSGA-III ainda não está implementado com JMetal neste protótipo.");
-        System.out.println("Apenas seria executado dinamicamente numa fase posterior.");
         printConfiguration(config);
 
         return new OptimizationResult(
@@ -37,7 +49,6 @@ public class OptimizationRunner {
 
     private OptimizationResult executeMoead(AlgorithmConfiguration config) {
         System.out.println("MOEA/D ainda não está implementado com JMetal neste protótipo.");
-        System.out.println("Apenas seria executado dinamicamente numa fase posterior.");
         printConfiguration(config);
 
         return new OptimizationResult(

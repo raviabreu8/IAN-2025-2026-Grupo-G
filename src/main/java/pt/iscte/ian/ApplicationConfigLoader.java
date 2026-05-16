@@ -21,6 +21,7 @@ public class ApplicationConfigLoader {
 
         JsonNode ollamaNode = root.get("ollama");
         JsonNode executionNode = root.get("execution");
+        JsonNode timetablingNode = root.get("timetabling");
 
         if (ollamaNode == null) {
             throw new RuntimeException("Configuração inválida: campo 'ollama' em falta.");
@@ -35,6 +36,17 @@ public class ApplicationConfigLoader {
             maxCorrectionAttempts = executionNode.get("max_correction_attempts").asInt();
         }
 
-        return new ApplicationConfig(apiUrl, model, maxCorrectionAttempts);
+        int maxEntriesForOptimization = 300;
+
+        if (timetablingNode != null && timetablingNode.has("max_entries_for_optimization")) {
+            maxEntriesForOptimization = timetablingNode.get("max_entries_for_optimization").asInt();
+        }
+
+        return new ApplicationConfig(
+                apiUrl,
+                model,
+                maxCorrectionAttempts,
+                maxEntriesForOptimization
+        );
     }
 }

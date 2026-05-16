@@ -45,10 +45,13 @@ public class ExecutionReportWriter {
         timetablingEvaluationNode.put("missing_room_assignments", timetablingEvaluation.getMissingRoomAssignments());
         timetablingEvaluationNode.put("unknown_room_assignments", timetablingEvaluation.getUnknownRoomAssignments());
         timetablingEvaluationNode.put("room_time_conflicts", timetablingEvaluation.getRoomTimeConflicts());
+        timetablingEvaluationNode.put("class_group_time_conflicts", timetablingEvaluation.getClassGroupTimeConflicts());
         timetablingEvaluationNode.put("total_penalty", timetablingEvaluation.getTotalPenalty());
         timetablingEvaluationNode.put("capacity_violation_rate", timetablingEvaluation.getCapacityViolationRate());
         timetablingEvaluationNode.put("missing_room_rate", timetablingEvaluation.getMissingRoomRate());
         timetablingEvaluationNode.put("unknown_room_rate", timetablingEvaluation.getUnknownRoomRate());
+        timetablingEvaluationNode.put("room_time_conflict_rate", timetablingEvaluation.getRoomTimeConflictRate());
+        timetablingEvaluationNode.put("class_group_time_conflict_rate", timetablingEvaluation.getClassGroupTimeConflictRate());
 
         report.set("timetabling_evaluation", timetablingEvaluationNode);
         
@@ -63,6 +66,13 @@ public class ExecutionReportWriter {
         resultNode.put("algorithm", result.getAlgorithm());
         resultNode.put("execution_time_ms", result.getExecutionTimeMs());
         resultNode.put("number_of_solutions", result.getNumberOfSolutions());
+
+        if (result.hasBestObjectiveValues()) {
+            resultNode.put("best_penalty", result.getBestPenalty());
+            resultNode.put("unused_capacity_of_best_penalty_solution", result.getUnusedCapacityOfBestPenaltySolution());
+            resultNode.put("best_unused_capacity", result.getBestUnusedCapacity());
+            resultNode.put("penalty_of_best_unused_capacity_solution", result.getPenaltyOfBestUnusedCapacitySolution());
+        }
 
         report.set("configuration", configurationNode);
         report.set("result", resultNode);

@@ -79,8 +79,8 @@ public class PromptBuilder {
                 "recommended_algorithm": "nome_exato_do_algoritmo",
                 "justification": "explicação curta considerando o problema e os dados reais",
                 "parameters": {
-                    "population_size": 100,
-                    "max_evaluations": 25000,
+                    "population_size": 30,
+                    "max_evaluations": 1000,
                     "crossover_probability": 0.9,
                     "mutation_probability": 0.01
                 },
@@ -142,8 +142,8 @@ public class PromptBuilder {
                 "recommended_algorithm": "nome_exato_do_algoritmo",
                 "justification": "explicação curta",
                 "parameters": {
-                    "population_size": 100,
-                    "max_evaluations": 25000,
+                    "population_size": 30,
+                    "max_evaluations": 1000,
                     "crossover_probability": 0.9,
                     "mutation_probability": 0.01
                 },

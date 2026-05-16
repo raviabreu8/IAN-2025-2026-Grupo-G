@@ -7,6 +7,7 @@ public class TimetablingEvaluation {
     private final int missingRoomAssignments;
     private final int unknownRoomAssignments;
     private final int roomTimeConflicts;
+    private final int classGroupTimeConflicts;
     private final int totalPenalty;
 
     public TimetablingEvaluation(
@@ -15,6 +16,7 @@ public class TimetablingEvaluation {
             int missingRoomAssignments,
             int unknownRoomAssignments,
             int roomTimeConflicts,
+            int classGroupTimeConflicts,
             int totalPenalty
     ) {
         this.totalEntries = totalEntries;
@@ -22,6 +24,7 @@ public class TimetablingEvaluation {
         this.missingRoomAssignments = missingRoomAssignments;
         this.unknownRoomAssignments = unknownRoomAssignments;
         this.roomTimeConflicts = roomTimeConflicts;
+        this.classGroupTimeConflicts = classGroupTimeConflicts;
         this.totalPenalty = totalPenalty;
     }
 
@@ -45,6 +48,10 @@ public class TimetablingEvaluation {
         return roomTimeConflicts;
     }
 
+    public int getClassGroupTimeConflicts() {
+        return classGroupTimeConflicts;
+    }
+
     public int getTotalPenalty() {
         return totalPenalty;
     }
@@ -61,6 +68,14 @@ public class TimetablingEvaluation {
         return totalEntries == 0 ? 0 : (double) unknownRoomAssignments / totalEntries;
     }
 
+    public double getRoomTimeConflictRate() {
+        return totalEntries == 0 ? 0 : (double) roomTimeConflicts / totalEntries;
+    }
+
+    public double getClassGroupTimeConflictRate() {
+        return totalEntries == 0 ? 0 : (double) classGroupTimeConflicts / totalEntries;
+    }
+
     @Override
     public String toString() {
         return "TimetablingEvaluation{" +
@@ -69,10 +84,13 @@ public class TimetablingEvaluation {
                 ", missingRoomAssignments=" + missingRoomAssignments +
                 ", unknownRoomAssignments=" + unknownRoomAssignments +
                 ", roomTimeConflicts=" + roomTimeConflicts +
+                ", classGroupTimeConflicts=" + classGroupTimeConflicts +
                 ", totalPenalty=" + totalPenalty +
                 ", capacityViolationRate=" + getCapacityViolationRate() +
                 ", missingRoomRate=" + getMissingRoomRate() +
                 ", unknownRoomRate=" + getUnknownRoomRate() +
+                ", roomTimeConflictRate=" + getRoomTimeConflictRate() +
+                ", classGroupTimeConflictRate=" + getClassGroupTimeConflictRate() +
                 '}';
     }
 }

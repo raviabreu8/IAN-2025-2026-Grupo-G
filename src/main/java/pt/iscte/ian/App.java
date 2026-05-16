@@ -37,6 +37,47 @@ public class App {
             System.out.println("Avaliação do horário atual:");
             System.out.println(timetablingEvaluation);
 
+            TimetablingOptimizationInstanceBuilder instanceBuilder = new TimetablingOptimizationInstanceBuilder();
+
+            TimetablingOptimizationInstance optimizationInstance = instanceBuilder.build(
+                    dataset,
+                    applicationConfig.getMaxEntriesForOptimization()
+            );
+
+            System.out.println("Instância simplificada de otimização criada:");
+            System.out.println(optimizationInstance);
+
+            System.out.println("Número de variáveis futuras no problema JMetal: "
+                    + optimizationInstance.getNumberOfVariables());
+
+            System.out.println("Número de salas candidatas: "
+                    + optimizationInstance.getNumberOfCandidateRooms());
+            
+            GreedyTimetablingAssignmentBuilder greedyAssignmentBuilder = new GreedyTimetablingAssignmentBuilder();
+            TimetablingAssignment greedyAssignment = greedyAssignmentBuilder.build(optimizationInstance);
+
+            TimetablingAssignmentEvaluator assignmentEvaluator =
+                    new TimetablingAssignmentEvaluator(dataset, optimizationInstance);
+
+            TimetablingAssignmentEvaluation assignmentEvaluation = assignmentEvaluator.evaluate(greedyAssignment);
+
+            System.out.println("Avaliação da atribuição greedy inicial:");
+            System.out.println(assignmentEvaluation);
+
+            TimetablingRoomAssignmentProblem timetablingProblem =
+            new TimetablingRoomAssignmentProblem(dataset, optimizationInstance);
+
+            var randomSolution = timetablingProblem.createSolution();
+            timetablingProblem.evaluate(randomSolution);
+
+            System.out.println("Problema JMetal simplificado criado:");
+            System.out.println("Nome do problema: " + timetablingProblem.name());
+            System.out.println("Número de variáveis: " + timetablingProblem.numberOfVariables());
+            System.out.println("Número de objetivos: " + timetablingProblem.numberOfObjectives());
+            System.out.println("Avaliação de uma solução aleatória:");
+            System.out.println("Objetivo 1 - penalização total: " + randomSolution.objectives()[0]);
+            System.out.println("Objetivo 2 - capacidade desperdiçada: " + randomSolution.objectives()[1]);
+
             OllamaClient ollamaClient = new OllamaClient(
                     applicationConfig.getOllamaApiUrl(),
                     applicationConfig.getOllamaModel()
@@ -108,7 +149,11 @@ public class App {
             System.out.println(config);
 
             OptimizationRunner runner = new OptimizationRunner();
-            OptimizationResult result = runner.execute(config);
+            OptimizationResult result = runner.execute(
+                    config,
+                    dataset,
+                    optimizationInstance
+            );
 
             System.out.println("Resultado final da execução:");
             System.out.println(result);

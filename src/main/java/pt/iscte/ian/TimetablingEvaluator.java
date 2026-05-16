@@ -1,11 +1,19 @@
 package pt.iscte.ian;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 public class TimetablingEvaluator {
+
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     public TimetablingEvaluation evaluate(TimetablingDataset dataset) {
         Set<String> knownRoomNames = dataset.getRooms()
@@ -18,48 +26,58 @@ public class TimetablingEvaluator {
         int missingRoomAssignments = 0;
         int unknownRoomAssignments = 0;
 
-        Map<String, Integer> roomTimeUsage = new HashMap<>();
+        Map<String, List<ScheduleInterval>> intervalsByRoomAndDate = new HashMap<>();
+        Map<String, List<ScheduleInterval>> intervalsByClassGroupAndDate = new HashMap<>();
 
         for (ScheduleEntry entry : dataset.getScheduleEntries()) {
             String roomName = entry.getRoomName();
 
             if (roomName == null || roomName.isBlank()) {
                 missingRoomAssignments++;
+            } else {
+                if (!knownRoomNames.contains(roomName)) {
+                    unknownRoomAssignments++;
+                }
+            }
+
+            boolean hasAssignedRoom = roomName != null && !roomName.isBlank();
+
+            if (hasAssignedRoom && entry.getRoomCapacity() > 0 && entry.getEnrolledStudents() > entry.getRoomCapacity()) {
+                capacityViolations++;
+            }
+            
+            ScheduleInterval interval = toInterval(entry);
+
+            if (interval == null) {
                 continue;
             }
 
-            if (!knownRoomNames.contains(roomName)) {
-                unknownRoomAssignments++;
+            if (roomName != null && !roomName.isBlank()) {
+                String roomDateKey = roomName + "|" + interval.date();
+                intervalsByRoomAndDate
+                        .computeIfAbsent(roomDateKey, key -> new ArrayList<>())
+                        .add(interval);
             }
 
-            if (entry.getEnrolledStudents() > entry.getRoomCapacity()) {
-                capacityViolations++;
-            }
+            String classGroup = entry.getClassGroup();
 
-            String roomTimeKey = roomName + "|" +
-                    entry.getDate() + "|" +
-                    entry.getStartTime() + "|" +
-                    entry.getEndTime();
-
-            roomTimeUsage.put(
-                    roomTimeKey,
-                    roomTimeUsage.getOrDefault(roomTimeKey, 0) + 1
-            );
-        }
-
-        int roomTimeConflicts = 0;
-
-        for (int usageCount : roomTimeUsage.values()) {
-            if (usageCount > 1) {
-                roomTimeConflicts += usageCount - 1;
+            if (classGroup != null && !classGroup.isBlank()) {
+                String classGroupDateKey = classGroup + "|" + interval.date();
+                intervalsByClassGroupAndDate
+                        .computeIfAbsent(classGroupDateKey, key -> new ArrayList<>())
+                        .add(interval);
             }
         }
+
+        int roomTimeConflicts = countOverlappingIntervals(intervalsByRoomAndDate);
+        int classGroupTimeConflicts = countOverlappingIntervals(intervalsByClassGroupAndDate);
 
         int totalPenalty =
                 capacityViolations * 3 +
                 missingRoomAssignments * 5 +
                 unknownRoomAssignments * 4 +
-                roomTimeConflicts * 5;
+                roomTimeConflicts * 8 +
+                classGroupTimeConflicts * 8;
 
         return new TimetablingEvaluation(
                 totalEntries,
@@ -67,7 +85,63 @@ public class TimetablingEvaluator {
                 missingRoomAssignments,
                 unknownRoomAssignments,
                 roomTimeConflicts,
+                classGroupTimeConflicts,
                 totalPenalty
         );
+    }
+
+    private ScheduleInterval toInterval(ScheduleEntry entry) {
+        try {
+            LocalDate date = LocalDate.parse(entry.getDate(), DATE_FORMATTER);
+            LocalTime startTime = LocalTime.parse(entry.getStartTime());
+            LocalTime endTime = LocalTime.parse(entry.getEndTime());
+
+            if (!endTime.isAfter(startTime)) {
+                return null;
+            }
+
+            return new ScheduleInterval(date, startTime, endTime);
+
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private int countOverlappingIntervals(Map<String, List<ScheduleInterval>> groupedIntervals) {
+        int conflicts = 0;
+
+        for (List<ScheduleInterval> intervals : groupedIntervals.values()) {
+            intervals.sort(Comparator.comparing(ScheduleInterval::startTime));
+
+            for (int i = 0; i < intervals.size(); i++) {
+                ScheduleInterval current = intervals.get(i);
+
+                for (int j = i + 1; j < intervals.size(); j++) {
+                    ScheduleInterval next = intervals.get(j);
+
+                    if (!next.startTime().isBefore(current.endTime())) {
+                        break;
+                    }
+
+                    if (overlaps(current, next)) {
+                        conflicts++;
+                    }
+                }
+            }
+        }
+
+        return conflicts;
+    }
+
+    private boolean overlaps(ScheduleInterval first, ScheduleInterval second) {
+        return first.startTime().isBefore(second.endTime())
+                && second.startTime().isBefore(first.endTime());
+    }
+
+    private record ScheduleInterval(
+            LocalDate date,
+            LocalTime startTime,
+            LocalTime endTime
+    ) {
     }
 }
