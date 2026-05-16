@@ -34,7 +34,7 @@ public class DatasetLoader {
 
             for (CSVRecord record : parser) {
                 String building = getValue(record, "Edifício");
-                String name = getValue(record, "Nome_sala");
+                String name = normalizeRoomName(getValue(record, "Nome_sala"));
                 int normalCapacity = parseInt(getValue(record, "Capacidade_Normal"));
                 int examCapacity = parseInt(getValue(record, "Capacidade_Exame"));
 
@@ -80,7 +80,7 @@ public class DatasetLoader {
                 String endTime = getValue(record, "Fim");
                 String date = getValue(record, "Dia");
                 String requestedRoomFeatures = getValue(record, "Características da sala pedida para a aula");
-                String roomName = getValue(record, "Sala da aula");
+                String roomName = normalizeRoomName(getValue(record, "Sala da aula"));
                 int roomCapacity = parseInt(getValue(record, "Lotação"));
                 String realRoomFeatures = getValue(record, "Características reais da sala");
 
@@ -146,5 +146,15 @@ public class DatasetLoader {
             loadRooms(),
             loadScheduleEntries()
     );
+    }
+
+    private String normalizeRoomName(String value) {
+        if (value == null || value.isBlank()) {
+            return "";
+        }
+
+        return value.trim()
+                .replace(" ", "_")
+                .replaceAll("_+", "_");
     }
 }
