@@ -159,7 +159,16 @@ public class App {
             System.out.println(result);
 
             ExecutionReportWriter reportWriter = new ExecutionReportWriter();
-            reportWriter.write(config, result, finalLlmResponse, qualityReport, timetablingEvaluation);
+            reportWriter.write(
+                                config,
+                                result,
+                                finalLlmResponse,
+                                qualityReport,
+                                timetablingEvaluation,
+                                optimizationInstance,
+                                assignmentEvaluation
+            );
+
         } catch (Exception e) {
             System.out.println("Erro na aplicação:");
             System.out.println(e.getMessage());

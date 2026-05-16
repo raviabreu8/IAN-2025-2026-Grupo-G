@@ -13,11 +13,13 @@ public class ExecutionReportWriter {
     private final ObjectMapper mapper = new ObjectMapper();
 
     public void write(
-            AlgorithmConfiguration config,
-            OptimizationResult result,
-            String finalLlmResponse,
-            DatasetQualityReport datasetQualityReport,
-            TimetablingEvaluation timetablingEvaluation
+        AlgorithmConfiguration config,
+        OptimizationResult result,
+        String finalLlmResponse,
+        DatasetQualityReport datasetQualityReport,
+        TimetablingEvaluation timetablingEvaluation,
+        TimetablingOptimizationInstance optimizationInstance,
+        TimetablingAssignmentEvaluation greedyEvaluation
     ) throws Exception {
         Path outputDirectory = Path.of("outputs");
         Files.createDirectories(outputDirectory);
@@ -55,6 +57,22 @@ public class ExecutionReportWriter {
 
         report.set("timetabling_evaluation", timetablingEvaluationNode);
         
+        ObjectNode optimizationInstanceNode = mapper.createObjectNode();
+        optimizationInstanceNode.put("entries_to_optimize", optimizationInstance.getNumberOfVariables());
+        optimizationInstanceNode.put("candidate_rooms", optimizationInstance.getNumberOfCandidateRooms());
+
+        report.set("optimization_instance", optimizationInstanceNode);
+
+        ObjectNode greedyNode = mapper.createObjectNode();
+        greedyNode.put("assigned_entries", greedyEvaluation.getAssignedEntries());
+        greedyNode.put("invalid_room_assignments", greedyEvaluation.getInvalidRoomAssignments());
+        greedyNode.put("capacity_violations", greedyEvaluation.getCapacityViolations());
+        greedyNode.put("room_time_conflicts", greedyEvaluation.getRoomTimeConflicts());
+        greedyNode.put("total_unused_capacity", greedyEvaluation.getTotalUnusedCapacity());
+        greedyNode.put("total_penalty", greedyEvaluation.getTotalPenalty());
+
+        report.set("greedy_baseline", greedyNode);
+
         ObjectNode configurationNode = mapper.createObjectNode();
         configurationNode.put("algorithm", config.getAlgorithm());
         configurationNode.put("population_size", config.getPopulationSize());
