@@ -75,6 +75,10 @@ public class JMetalTimetablingNsgaIIRunner {
         double bestUnusedCapacity = bestUnusedCapacitySolution == null ? Double.NaN : bestUnusedCapacitySolution.objectives()[1];
         double penaltyOfBestUnusedCapacitySolution = bestUnusedCapacitySolution == null ? Double.NaN : bestUnusedCapacitySolution.objectives()[0];
 
+        int[] bestPenaltyRoomIndexes = bestPenaltySolution == null
+                ? new int[0]
+                : extractRoomIndexes(bestPenaltySolution);
+
         return new OptimizationResult(
                 config.getAlgorithm(),
                 executionTime,
@@ -82,7 +86,18 @@ public class JMetalTimetablingNsgaIIRunner {
                 bestPenalty,
                 unusedCapacityOfBestPenaltySolution,
                 bestUnusedCapacity,
-                penaltyOfBestUnusedCapacitySolution
+                penaltyOfBestUnusedCapacitySolution,
+                bestPenaltyRoomIndexes
         );
+    }
+
+    private int[] extractRoomIndexes(IntegerSolution solution) {
+        int[] roomIndexes = new int[solution.variables().size()];
+
+        for (int i = 0; i < solution.variables().size(); i++) {
+            roomIndexes[i] = solution.variables().get(i);
+        }
+
+        return roomIndexes;
     }
 }

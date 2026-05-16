@@ -37,6 +37,12 @@ public class App {
             System.out.println("Avaliação do horário atual:");
             System.out.println(timetablingEvaluation);
 
+            RoomFeatureAnalyzer roomFeatureAnalyzer = new RoomFeatureAnalyzer();
+            RoomFeatureAnalysisReport roomFeatureReport = roomFeatureAnalyzer.analyze(dataset);
+
+            System.out.println("AnÃ¡lise de compatibilidade das caracterÃ­sticas das salas:");
+            System.out.println(roomFeatureReport);
+
             TimetablingOptimizationInstanceBuilder instanceBuilder = new TimetablingOptimizationInstanceBuilder();
 
             TimetablingOptimizationInstance optimizationInstance = instanceBuilder.build(
@@ -168,6 +174,9 @@ public class App {
                                 optimizationInstance,
                                 assignmentEvaluation
             );
+
+            OptimizedAssignmentExporter optimizedAssignmentExporter = new OptimizedAssignmentExporter();
+            optimizedAssignmentExporter.export(optimizationInstance, result);
 
         } catch (Exception e) {
             System.out.println("Erro na aplicação:");

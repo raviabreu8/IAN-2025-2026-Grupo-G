@@ -6,6 +6,8 @@ import java.util.stream.Collectors;
 public class DatasetQualityAnalyzer {
 
     public DatasetQualityReport analyze(TimetablingDataset dataset) {
+        RoomFeatureMatcher featureMatcher = new RoomFeatureMatcher();
+
         Set<String> knownRoomNames = dataset.getRooms()
                 .stream()
                 .map(Room::getName)
@@ -20,8 +22,16 @@ public class DatasetQualityAnalyzer {
         int entriesWithCapacityProblem = 0;
         int entriesWithoutRoom = 0;
         int entriesWithUnknownRoom = 0;
+        int entriesNotRequiringRoom = 0;
 
         for (ScheduleEntry entry : dataset.getScheduleEntries()) {
+            boolean noRoomNeeded = featureMatcher.isNoRoomNeeded(entry.getRequestedRoomFeature());
+
+            if (noRoomNeeded) {
+                entriesNotRequiringRoom++;
+                continue;
+            }
+
             String roomName = entry.getRoomName();
 
             if (roomName == null || roomName.isBlank()) {
@@ -44,7 +54,8 @@ public class DatasetQualityAnalyzer {
                 distinctRoomsUsed.size(),
                 entriesWithCapacityProblem,
                 entriesWithoutRoom,
-                entriesWithUnknownRoom
+                entriesWithUnknownRoom,
+                entriesNotRequiringRoom
         );
     }
 }

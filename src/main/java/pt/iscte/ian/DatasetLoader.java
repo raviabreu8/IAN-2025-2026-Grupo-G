@@ -9,7 +9,10 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class DatasetLoader {
 
@@ -37,12 +40,14 @@ public class DatasetLoader {
                 String name = normalizeRoomName(getValue(record, "Nome_sala"));
                 int normalCapacity = parseInt(getValue(record, "Capacidade_Normal"));
                 int examCapacity = parseInt(getValue(record, "Capacidade_Exame"));
+                Set<String> features = extractRoomFeatures(record);
 
                 rooms.add(new Room(
                         building,
                         name,
                         normalCapacity,
-                        examCapacity
+                        examCapacity,
+                        features
                 ));
             }
         }
@@ -79,10 +84,13 @@ public class DatasetLoader {
                 String startTime = getValue(record, "Início");
                 String endTime = getValue(record, "Fim");
                 String date = getValue(record, "Dia");
-                String requestedRoomFeatures = getValue(record, "Características da sala pedida para a aula");
+                String requestedRoomFeature = normalizeFeatureName(
+                        getValue(record, "Características da sala pedida para a aula")
+                );
                 String roomName = normalizeRoomName(getValue(record, "Sala da aula"));
                 int roomCapacity = parseInt(getValue(record, "Lotação"));
-                String realRoomFeatures = getValue(record, "Características reais da sala");
+                String realRoomFeaturesText = getValue(record, "Características reais da sala");
+                Set<String> realRoomFeatures = extractFeatureList(realRoomFeaturesText);
 
                 entries.add(new ScheduleEntry(
                         course,
@@ -94,9 +102,10 @@ public class DatasetLoader {
                         startTime,
                         endTime,
                         date,
-                        requestedRoomFeatures,
+                        requestedRoomFeature,
                         roomName,
                         roomCapacity,
+                        realRoomFeaturesText,
                         realRoomFeatures
                 ));
             }
@@ -156,5 +165,63 @@ public class DatasetLoader {
         return value.trim()
                 .replace(" ", "_")
                 .replaceAll("_+", "_");
+    }
+
+    private Set<String> extractRoomFeatures(CSVRecord record) {
+        Set<String> features = new HashSet<>();
+
+        Set<String> ignoredColumns = Set.of(
+                "Edifício",
+                "Nome_sala",
+                "Capacidade_Normal",
+                "Capacidade_Exame",
+                "Nº_características"
+        );
+
+        for (Map.Entry<String, String> entry : record.toMap().entrySet()) {
+            String columnName = entry.getKey();
+            String value = entry.getValue();
+
+            if (ignoredColumns.contains(columnName)) {
+                continue;
+            }
+
+            if (value != null && !value.isBlank()) {
+                features.add(normalizeFeatureName(columnName));
+            }
+        }
+
+        return features;
+    }
+
+    private String normalizeFeatureName(String value) {
+        if (value == null || value.isBlank()) {
+            return "";
+        }
+
+        return value.trim()
+                .replace("_", " ")
+                .replaceAll("\\s+", " ")
+                .toLowerCase();
+    }
+
+    private Set<String> extractFeatureList(String value) {
+        Set<String> features = new HashSet<>();
+
+        if (value == null || value.isBlank()) {
+            return features;
+        }
+
+        String[] parts = value.split(",");
+
+        for (String part : parts) {
+            String normalizedFeature = normalizeFeatureName(part);
+
+            if (!normalizedFeature.isBlank()) {
+                features.add(normalizedFeature);
+            }
+        }
+
+        return features;
     }
 }

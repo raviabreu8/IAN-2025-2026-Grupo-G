@@ -1,5 +1,7 @@
 package pt.iscte.ian;
 
+import java.util.Arrays;
+
 public class OptimizationResult {
 
     private final String algorithm;
@@ -12,6 +14,8 @@ public class OptimizationResult {
     private final double bestUnusedCapacity;
     private final double penaltyOfBestUnusedCapacitySolution;
 
+    private final int[] bestPenaltyRoomIndexes;
+
     public OptimizationResult(String algorithm, long executionTimeMs, int numberOfSolutions) {
         this(
                 algorithm,
@@ -20,7 +24,8 @@ public class OptimizationResult {
                 Double.NaN,
                 Double.NaN,
                 Double.NaN,
-                Double.NaN
+                Double.NaN,
+                new int[0]
         );
     }
 
@@ -33,6 +38,28 @@ public class OptimizationResult {
             double bestUnusedCapacity,
             double penaltyOfBestUnusedCapacitySolution
     ) {
+        this(
+                algorithm,
+                executionTimeMs,
+                numberOfSolutions,
+                bestPenalty,
+                unusedCapacityOfBestPenaltySolution,
+                bestUnusedCapacity,
+                penaltyOfBestUnusedCapacitySolution,
+                new int[0]
+        );
+    }
+
+    public OptimizationResult(
+            String algorithm,
+            long executionTimeMs,
+            int numberOfSolutions,
+            double bestPenalty,
+            double unusedCapacityOfBestPenaltySolution,
+            double bestUnusedCapacity,
+            double penaltyOfBestUnusedCapacitySolution,
+            int[] bestPenaltyRoomIndexes
+    ) {
         this.algorithm = algorithm;
         this.executionTimeMs = executionTimeMs;
         this.numberOfSolutions = numberOfSolutions;
@@ -40,6 +67,7 @@ public class OptimizationResult {
         this.unusedCapacityOfBestPenaltySolution = unusedCapacityOfBestPenaltySolution;
         this.bestUnusedCapacity = bestUnusedCapacity;
         this.penaltyOfBestUnusedCapacitySolution = penaltyOfBestUnusedCapacitySolution;
+        this.bestPenaltyRoomIndexes = Arrays.copyOf(bestPenaltyRoomIndexes, bestPenaltyRoomIndexes.length);
     }
 
     public String getAlgorithm() {
@@ -70,6 +98,14 @@ public class OptimizationResult {
         return penaltyOfBestUnusedCapacitySolution;
     }
 
+    public int[] getBestPenaltyRoomIndexes() {
+        return Arrays.copyOf(bestPenaltyRoomIndexes, bestPenaltyRoomIndexes.length);
+    }
+
+    public boolean hasBestPenaltyRoomIndexes() {
+        return bestPenaltyRoomIndexes.length > 0;
+    }
+
     public boolean hasBestObjectiveValues() {
         return !Double.isNaN(bestPenalty)
                 && !Double.isNaN(unusedCapacityOfBestPenaltySolution)
@@ -87,6 +123,7 @@ public class OptimizationResult {
                 ", unusedCapacityOfBestPenaltySolution=" + unusedCapacityOfBestPenaltySolution +
                 ", bestUnusedCapacity=" + bestUnusedCapacity +
                 ", penaltyOfBestUnusedCapacitySolution=" + penaltyOfBestUnusedCapacitySolution +
+                ", bestPenaltyRoomIndexes=" + bestPenaltyRoomIndexes.length +
                 '}';
     }
 }

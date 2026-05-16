@@ -34,6 +34,7 @@ public class TimetablingAssignmentEvaluator {
         int assignedEntries = assignment.size();
         int invalidRoomAssignments = 0;
         int capacityViolations = 0;
+        int totalCapacityShortage = 0;
         int roomTimeConflicts = 0;
         int totalUnusedCapacity = 0;
 
@@ -48,10 +49,13 @@ public class TimetablingAssignmentEvaluator {
 
             Room selectedRoom = candidateRooms.get(roomIndex);
 
-            if (selectedRoom.getNormalCapacity() < entry.getEnrolledStudents()) {
+            int capacityDifference = selectedRoom.getNormalCapacity() - entry.getEnrolledStudents();
+
+            if (capacityDifference < 0) {
                 capacityViolations++;
+                totalCapacityShortage += Math.abs(capacityDifference);
             } else {
-                totalUnusedCapacity += selectedRoom.getNormalCapacity() - entry.getEnrolledStudents();
+                totalUnusedCapacity += capacityDifference;
             }
 
             ScheduleInterval interval = toInterval(entry);
@@ -88,15 +92,17 @@ public class TimetablingAssignmentEvaluator {
         }
 
         int totalPenalty =
-                invalidRoomAssignments * 10 +
-                capacityViolations * 5 +
-                roomTimeConflicts * 8 +
+                invalidRoomAssignments * 10000 +
+                capacityViolations * 1000 +
+                totalCapacityShortage * 100 +
+                roomTimeConflicts * 50 +
                 totalUnusedCapacity;
 
         return new TimetablingAssignmentEvaluation(
                 assignedEntries,
                 invalidRoomAssignments,
                 capacityViolations,
+                totalCapacityShortage,
                 roomTimeConflicts,
                 totalUnusedCapacity,
                 totalPenalty

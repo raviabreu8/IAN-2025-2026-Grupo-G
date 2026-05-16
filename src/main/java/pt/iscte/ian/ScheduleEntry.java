@@ -1,5 +1,8 @@
 package pt.iscte.ian;
 
+import java.util.Set;
+import java.util.TreeSet;
+
 public class ScheduleEntry {
 
     private final String course;
@@ -11,10 +14,14 @@ public class ScheduleEntry {
     private final String startTime;
     private final String endTime;
     private final String date;
-    private final String requestedRoomFeatures;
+
+    private final String requestedRoomFeature;
+
     private final String roomName;
     private final int roomCapacity;
-    private final String realRoomFeatures;
+
+    private final String realRoomFeaturesText;
+    private final Set<String> realRoomFeatures;
 
     public ScheduleEntry(
             String course,
@@ -26,10 +33,11 @@ public class ScheduleEntry {
             String startTime,
             String endTime,
             String date,
-            String requestedRoomFeatures,
+            String requestedRoomFeature,
             String roomName,
             int roomCapacity,
-            String realRoomFeatures
+            String realRoomFeaturesText,
+            Set<String> realRoomFeatures
     ) {
         this.course = course;
         this.curricularUnit = curricularUnit;
@@ -40,10 +48,11 @@ public class ScheduleEntry {
         this.startTime = startTime;
         this.endTime = endTime;
         this.date = date;
-        this.requestedRoomFeatures = requestedRoomFeatures;
+        this.requestedRoomFeature = requestedRoomFeature;
         this.roomName = roomName;
         this.roomCapacity = roomCapacity;
-        this.realRoomFeatures = realRoomFeatures;
+        this.realRoomFeaturesText = realRoomFeaturesText;
+        this.realRoomFeatures = Set.copyOf(realRoomFeatures);
     }
 
     public String getCourse() {
@@ -82,8 +91,12 @@ public class ScheduleEntry {
         return date;
     }
 
+    public String getRequestedRoomFeature() {
+        return requestedRoomFeature;
+    }
+
     public String getRequestedRoomFeatures() {
-        return requestedRoomFeatures;
+        return requestedRoomFeature;
     }
 
     public String getRoomName() {
@@ -94,7 +107,15 @@ public class ScheduleEntry {
         return roomCapacity;
     }
 
+    public String getRealRoomFeaturesText() {
+        return realRoomFeaturesText;
+    }
+
     public String getRealRoomFeatures() {
+        return realRoomFeaturesText;
+    }
+
+    public Set<String> getRealRoomFeaturesSet() {
         return realRoomFeatures;
     }
 
@@ -110,8 +131,10 @@ public class ScheduleEntry {
                 ", startTime='" + startTime + '\'' +
                 ", endTime='" + endTime + '\'' +
                 ", date='" + date + '\'' +
+                ", requestedRoomFeature='" + requestedRoomFeature + '\'' +
                 ", roomName='" + roomName + '\'' +
                 ", roomCapacity=" + roomCapacity +
+                ", realRoomFeatures=" + new TreeSet<>(realRoomFeatures) +
                 '}';
     }
 }

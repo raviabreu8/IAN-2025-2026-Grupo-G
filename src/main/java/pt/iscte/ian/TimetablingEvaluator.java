@@ -16,6 +16,8 @@ public class TimetablingEvaluator {
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     public TimetablingEvaluation evaluate(TimetablingDataset dataset) {
+        RoomFeatureMatcher featureMatcher = new RoomFeatureMatcher();
+
         Set<String> knownRoomNames = dataset.getRooms()
                 .stream()
                 .map(Room::getName)
@@ -30,19 +32,23 @@ public class TimetablingEvaluator {
         Map<String, List<ScheduleInterval>> intervalsByClassGroupAndDate = new HashMap<>();
 
         for (ScheduleEntry entry : dataset.getScheduleEntries()) {
+            boolean requiresRoom = !featureMatcher.isNoRoomNeeded(entry.getRequestedRoomFeature());
             String roomName = entry.getRoomName();
 
-            if (roomName == null || roomName.isBlank()) {
-                missingRoomAssignments++;
-            } else {
-                if (!knownRoomNames.contains(roomName)) {
-                    unknownRoomAssignments++;
+            if (requiresRoom) {
+                if (roomName == null || roomName.isBlank()) {
+                    missingRoomAssignments++;
+                } else {
+                    if (!knownRoomNames.contains(roomName)) {
+                        unknownRoomAssignments++;
+                    }
                 }
             }
 
             boolean hasAssignedRoom = roomName != null && !roomName.isBlank();
 
-            if (hasAssignedRoom && entry.getRoomCapacity() > 0 && entry.getEnrolledStudents() > entry.getRoomCapacity()) {
+            if (requiresRoom && hasAssignedRoom && entry.getRoomCapacity() > 0
+                    && entry.getEnrolledStudents() > entry.getRoomCapacity()) {
                 capacityViolations++;
             }
             

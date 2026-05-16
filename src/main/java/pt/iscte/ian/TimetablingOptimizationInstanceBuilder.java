@@ -7,6 +7,8 @@ import java.util.stream.Collectors;
 
 public class TimetablingOptimizationInstanceBuilder {
 
+    private final RoomFeatureMatcher featureMatcher = new RoomFeatureMatcher();
+
     public TimetablingOptimizationInstance build(
             TimetablingDataset dataset,
             int maxEntriesForOptimization
@@ -36,6 +38,10 @@ public class TimetablingOptimizationInstanceBuilder {
     }
 
     private boolean isProblematic(ScheduleEntry entry, Set<String> knownRoomNames) {
+        if (featureMatcher.isNoRoomNeeded(entry.getRequestedRoomFeature())) {
+            return false;
+        }
+
         String roomName = entry.getRoomName();
 
         boolean missingRoom = roomName == null || roomName.isBlank();

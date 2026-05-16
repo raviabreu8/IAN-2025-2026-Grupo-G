@@ -67,6 +67,7 @@ public class ExecutionReportWriter {
         greedyNode.put("assigned_entries", greedyEvaluation.getAssignedEntries());
         greedyNode.put("invalid_room_assignments", greedyEvaluation.getInvalidRoomAssignments());
         greedyNode.put("capacity_violations", greedyEvaluation.getCapacityViolations());
+        greedyNode.put("total_capacity_shortage", greedyEvaluation.getTotalCapacityShortage());
         greedyNode.put("room_time_conflicts", greedyEvaluation.getRoomTimeConflicts());
         greedyNode.put("total_unused_capacity", greedyEvaluation.getTotalUnusedCapacity());
         greedyNode.put("total_penalty", greedyEvaluation.getTotalPenalty());

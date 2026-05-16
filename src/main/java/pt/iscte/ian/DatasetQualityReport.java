@@ -8,6 +8,7 @@ public class DatasetQualityReport {
     private final int entriesWithCapacityProblem;
     private final int entriesWithoutRoom;
     private final int entriesWithUnknownRoom;
+    private final int entriesNotRequiringRoom;
 
     public DatasetQualityReport(
             int numberOfRooms,
@@ -15,7 +16,8 @@ public class DatasetQualityReport {
             int numberOfDistinctRoomsUsed,
             int entriesWithCapacityProblem,
             int entriesWithoutRoom,
-            int entriesWithUnknownRoom
+            int entriesWithUnknownRoom,
+            int entriesNotRequiringRoom
     ) {
         this.numberOfRooms = numberOfRooms;
         this.numberOfScheduleEntries = numberOfScheduleEntries;
@@ -23,6 +25,7 @@ public class DatasetQualityReport {
         this.entriesWithCapacityProblem = entriesWithCapacityProblem;
         this.entriesWithoutRoom = entriesWithoutRoom;
         this.entriesWithUnknownRoom = entriesWithUnknownRoom;
+        this.entriesNotRequiringRoom = entriesNotRequiringRoom;
     }
 
     public int getNumberOfRooms() {
@@ -49,6 +52,10 @@ public class DatasetQualityReport {
         return entriesWithUnknownRoom;
     }
 
+    public int getEntriesNotRequiringRoom() {
+        return entriesNotRequiringRoom;
+    }
+
     @Override
     public String toString() {
         return "DatasetQualityReport{" +
@@ -58,6 +65,7 @@ public class DatasetQualityReport {
                 ", entriesWithCapacityProblem=" + entriesWithCapacityProblem +
                 ", entriesWithoutRoom=" + entriesWithoutRoom +
                 ", entriesWithUnknownRoom=" + entriesWithUnknownRoom +
+                ", entriesNotRequiringRoom=" + entriesNotRequiringRoom +
                 '}';
     }
 }
