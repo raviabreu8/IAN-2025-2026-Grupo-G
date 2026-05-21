@@ -48,12 +48,14 @@ public class ExecutionReportWriter {
         timetablingEvaluationNode.put("unknown_room_assignments", timetablingEvaluation.getUnknownRoomAssignments());
         timetablingEvaluationNode.put("room_time_conflicts", timetablingEvaluation.getRoomTimeConflicts());
         timetablingEvaluationNode.put("class_group_time_conflicts", timetablingEvaluation.getClassGroupTimeConflicts());
+        timetablingEvaluationNode.put("feature_mismatches", timetablingEvaluation.getFeatureMismatches());
         timetablingEvaluationNode.put("total_penalty", timetablingEvaluation.getTotalPenalty());
         timetablingEvaluationNode.put("capacity_violation_rate", timetablingEvaluation.getCapacityViolationRate());
         timetablingEvaluationNode.put("missing_room_rate", timetablingEvaluation.getMissingRoomRate());
         timetablingEvaluationNode.put("unknown_room_rate", timetablingEvaluation.getUnknownRoomRate());
         timetablingEvaluationNode.put("room_time_conflict_rate", timetablingEvaluation.getRoomTimeConflictRate());
         timetablingEvaluationNode.put("class_group_time_conflict_rate", timetablingEvaluation.getClassGroupTimeConflictRate());
+        timetablingEvaluationNode.put("feature_mismatch_rate", timetablingEvaluation.getFeatureMismatchRate());
 
         report.set("timetabling_evaluation", timetablingEvaluationNode);
         
@@ -69,6 +71,7 @@ public class ExecutionReportWriter {
         greedyNode.put("capacity_violations", greedyEvaluation.getCapacityViolations());
         greedyNode.put("total_capacity_shortage", greedyEvaluation.getTotalCapacityShortage());
         greedyNode.put("room_time_conflicts", greedyEvaluation.getRoomTimeConflicts());
+        greedyNode.put("feature_mismatches", greedyEvaluation.getFeatureMismatches());
         greedyNode.put("total_unused_capacity", greedyEvaluation.getTotalUnusedCapacity());
         greedyNode.put("total_penalty", greedyEvaluation.getTotalPenalty());
 

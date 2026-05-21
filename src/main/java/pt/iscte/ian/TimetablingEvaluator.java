@@ -16,17 +16,26 @@ public class TimetablingEvaluator {
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     public TimetablingEvaluation evaluate(TimetablingDataset dataset) {
-        RoomFeatureMatcher featureMatcher = new RoomFeatureMatcher();
-
         Set<String> knownRoomNames = dataset.getRooms()
                 .stream()
                 .map(Room::getName)
                 .collect(Collectors.toSet());
 
+        Map<String, Room> roomsByName = dataset.getRooms()
+                .stream()
+                .collect(Collectors.toMap(
+                        Room::getName,
+                        room -> room,
+                        (first, second) -> first
+                ));
+
+        RoomFeatureMatcher featureMatcher = new RoomFeatureMatcher();
+
         int totalEntries = dataset.getScheduleEntries().size();
         int capacityViolations = 0;
         int missingRoomAssignments = 0;
         int unknownRoomAssignments = 0;
+        int featureMismatches = 0;
 
         Map<String, List<ScheduleInterval>> intervalsByRoomAndDate = new HashMap<>();
         Map<String, List<ScheduleInterval>> intervalsByClassGroupAndDate = new HashMap<>();
@@ -41,6 +50,20 @@ public class TimetablingEvaluator {
                 } else {
                     if (!knownRoomNames.contains(roomName)) {
                         unknownRoomAssignments++;
+                    }
+                }
+            }
+
+            if (requiresRoom && roomName != null && !roomName.isBlank()) {
+                Room assignedRoom = roomsByName.get(roomName);
+
+                if (assignedRoom != null) {
+                    String requestedFeature = entry.getRequestedRoomFeature();
+
+                    if (requestedFeature != null
+                            && !requestedFeature.isBlank()
+                            && !featureMatcher.matches(requestedFeature, assignedRoom)) {
+                        featureMismatches++;
                     }
                 }
             }
@@ -83,7 +106,8 @@ public class TimetablingEvaluator {
                 missingRoomAssignments * 5 +
                 unknownRoomAssignments * 4 +
                 roomTimeConflicts * 8 +
-                classGroupTimeConflicts * 8;
+                classGroupTimeConflicts * 8 +
+                featureMismatches * 6;
 
         return new TimetablingEvaluation(
                 totalEntries,
@@ -92,6 +116,7 @@ public class TimetablingEvaluator {
                 unknownRoomAssignments,
                 roomTimeConflicts,
                 classGroupTimeConflicts,
+                featureMismatches,
                 totalPenalty
         );
     }

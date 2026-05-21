@@ -18,6 +18,7 @@ public class TimetablingAssignmentEvaluator {
     private final List<ScheduleEntry> entriesToOptimize;
     private final List<Room> candidateRooms;
     private final Map<String, List<ScheduleInterval>> fixedRoomOccupancy;
+    private final RoomFeatureMatcher featureMatcher = new RoomFeatureMatcher();
 
     public TimetablingAssignmentEvaluator(
             TimetablingDataset dataset,
@@ -36,6 +37,7 @@ public class TimetablingAssignmentEvaluator {
         int capacityViolations = 0;
         int totalCapacityShortage = 0;
         int roomTimeConflicts = 0;
+        int featureMismatches = 0;
         int totalUnusedCapacity = 0;
 
         for (int i = 0; i < assignment.size(); i++) {
@@ -48,6 +50,14 @@ public class TimetablingAssignmentEvaluator {
             }
 
             Room selectedRoom = candidateRooms.get(roomIndex);
+            String requestedFeature = entry.getRequestedRoomFeature();
+
+            if (requestedFeature != null
+                    && !requestedFeature.isBlank()
+                    && !featureMatcher.isNoRoomNeeded(requestedFeature)
+                    && !featureMatcher.matches(requestedFeature, selectedRoom)) {
+                featureMismatches++;
+            }
 
             int capacityDifference = selectedRoom.getNormalCapacity() - entry.getEnrolledStudents();
 
@@ -96,6 +106,7 @@ public class TimetablingAssignmentEvaluator {
                 capacityViolations * 1000 +
                 totalCapacityShortage * 100 +
                 roomTimeConflicts * 50 +
+                featureMismatches * 500 +
                 totalUnusedCapacity;
 
         return new TimetablingAssignmentEvaluation(
@@ -104,6 +115,7 @@ public class TimetablingAssignmentEvaluator {
                 capacityViolations,
                 totalCapacityShortage,
                 roomTimeConflicts,
+                featureMismatches,
                 totalUnusedCapacity,
                 totalPenalty
         );

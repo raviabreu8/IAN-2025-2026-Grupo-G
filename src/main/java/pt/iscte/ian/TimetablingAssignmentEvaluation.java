@@ -7,6 +7,7 @@ public class TimetablingAssignmentEvaluation {
     private final int capacityViolations;
     private final int totalCapacityShortage;
     private final int roomTimeConflicts;
+    private final int featureMismatches;
     private final int totalUnusedCapacity;
     private final int totalPenalty;
 
@@ -16,6 +17,7 @@ public class TimetablingAssignmentEvaluation {
             int capacityViolations,
             int totalCapacityShortage,
             int roomTimeConflicts,
+            int featureMismatches,
             int totalUnusedCapacity,
             int totalPenalty
     ) {
@@ -24,6 +26,7 @@ public class TimetablingAssignmentEvaluation {
         this.capacityViolations = capacityViolations;
         this.totalCapacityShortage = totalCapacityShortage;
         this.roomTimeConflicts = roomTimeConflicts;
+        this.featureMismatches = featureMismatches;
         this.totalUnusedCapacity = totalUnusedCapacity;
         this.totalPenalty = totalPenalty;
     }
@@ -48,6 +51,10 @@ public class TimetablingAssignmentEvaluation {
         return roomTimeConflicts;
     }
 
+    public int getFeatureMismatches() {
+        return featureMismatches;
+    }
+
     public int getTotalUnusedCapacity() {
         return totalUnusedCapacity;
     }
@@ -64,6 +71,7 @@ public class TimetablingAssignmentEvaluation {
                 ", capacityViolations=" + capacityViolations +
                 ", totalCapacityShortage=" + totalCapacityShortage +
                 ", roomTimeConflicts=" + roomTimeConflicts +
+                ", featureMismatches=" + featureMismatches +
                 ", totalUnusedCapacity=" + totalUnusedCapacity +
                 ", totalPenalty=" + totalPenalty +
                 '}';

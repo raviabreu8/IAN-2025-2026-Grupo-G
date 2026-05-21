@@ -8,6 +8,7 @@ public class TimetablingEvaluation {
     private final int unknownRoomAssignments;
     private final int roomTimeConflicts;
     private final int classGroupTimeConflicts;
+    private final int featureMismatches;
     private final int totalPenalty;
 
     public TimetablingEvaluation(
@@ -17,6 +18,7 @@ public class TimetablingEvaluation {
             int unknownRoomAssignments,
             int roomTimeConflicts,
             int classGroupTimeConflicts,
+            int featureMismatches,
             int totalPenalty
     ) {
         this.totalEntries = totalEntries;
@@ -25,6 +27,7 @@ public class TimetablingEvaluation {
         this.unknownRoomAssignments = unknownRoomAssignments;
         this.roomTimeConflicts = roomTimeConflicts;
         this.classGroupTimeConflicts = classGroupTimeConflicts;
+        this.featureMismatches = featureMismatches;
         this.totalPenalty = totalPenalty;
     }
 
@@ -52,6 +55,10 @@ public class TimetablingEvaluation {
         return classGroupTimeConflicts;
     }
 
+    public int getFeatureMismatches() {
+        return featureMismatches;
+    }
+
     public int getTotalPenalty() {
         return totalPenalty;
     }
@@ -76,6 +83,10 @@ public class TimetablingEvaluation {
         return totalEntries == 0 ? 0 : (double) classGroupTimeConflicts / totalEntries;
     }
 
+    public double getFeatureMismatchRate() {
+        return totalEntries == 0 ? 0 : (double) featureMismatches / totalEntries;
+    }
+
     @Override
     public String toString() {
         return "TimetablingEvaluation{" +
@@ -85,12 +96,14 @@ public class TimetablingEvaluation {
                 ", unknownRoomAssignments=" + unknownRoomAssignments +
                 ", roomTimeConflicts=" + roomTimeConflicts +
                 ", classGroupTimeConflicts=" + classGroupTimeConflicts +
+                ", featureMismatches=" + featureMismatches +
                 ", totalPenalty=" + totalPenalty +
                 ", capacityViolationRate=" + getCapacityViolationRate() +
                 ", missingRoomRate=" + getMissingRoomRate() +
                 ", unknownRoomRate=" + getUnknownRoomRate() +
                 ", roomTimeConflictRate=" + getRoomTimeConflictRate() +
                 ", classGroupTimeConflictRate=" + getClassGroupTimeConflictRate() +
+                ", featureMismatchRate=" + getFeatureMismatchRate() +
                 '}';
     }
 }
