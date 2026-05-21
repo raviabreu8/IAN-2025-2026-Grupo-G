@@ -43,12 +43,15 @@ public class ExecutionReportWriter {
 
         ObjectNode timetablingEvaluationNode = mapper.createObjectNode();
         timetablingEvaluationNode.put("total_entries", timetablingEvaluation.getTotalEntries());
+        timetablingEvaluationNode.put("invalid_room_assignments", timetablingEvaluation.getInvalidRoomAssignments());
         timetablingEvaluationNode.put("capacity_violations", timetablingEvaluation.getCapacityViolations());
+        timetablingEvaluationNode.put("total_capacity_shortage", timetablingEvaluation.getTotalCapacityShortage());
         timetablingEvaluationNode.put("missing_room_assignments", timetablingEvaluation.getMissingRoomAssignments());
         timetablingEvaluationNode.put("unknown_room_assignments", timetablingEvaluation.getUnknownRoomAssignments());
         timetablingEvaluationNode.put("room_time_conflicts", timetablingEvaluation.getRoomTimeConflicts());
         timetablingEvaluationNode.put("class_group_time_conflicts", timetablingEvaluation.getClassGroupTimeConflicts());
         timetablingEvaluationNode.put("feature_mismatches", timetablingEvaluation.getFeatureMismatches());
+        timetablingEvaluationNode.put("total_unused_capacity", timetablingEvaluation.getTotalUnusedCapacity());
         timetablingEvaluationNode.put("total_penalty", timetablingEvaluation.getTotalPenalty());
         timetablingEvaluationNode.put("capacity_violation_rate", timetablingEvaluation.getCapacityViolationRate());
         timetablingEvaluationNode.put("missing_room_rate", timetablingEvaluation.getMissingRoomRate());

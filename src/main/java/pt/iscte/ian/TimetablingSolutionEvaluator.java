@@ -32,10 +32,13 @@ public class TimetablingSolutionEvaluator {
                 ));
 
         int totalEntries = dataset.getScheduleEntries().size();
+        int invalidRoomAssignments = 0;
         int capacityViolations = 0;
+        int totalCapacityShortage = 0;
         int missingRoomAssignments = 0;
         int unknownRoomAssignments = 0;
         int featureMismatches = 0;
+        int totalUnusedCapacity = 0;
 
         Map<String, List<ScheduleInterval>> intervalsByRoomAndDate = new HashMap<>();
         Map<String, List<ScheduleInterval>> intervalsByClassGroupAndDate = new HashMap<>();
@@ -53,11 +56,15 @@ public class TimetablingSolutionEvaluator {
                 }
             }
 
-            if (requiresRoom
-                    && hasAssignedRoom
-                    && entry.getRoomCapacity() > 0
-                    && entry.getEnrolledStudents() > entry.getRoomCapacity()) {
-                capacityViolations++;
+            if (requiresRoom && hasAssignedRoom && entry.getRoomCapacity() > 0) {
+                int capacityDifference = entry.getRoomCapacity() - entry.getEnrolledStudents();
+
+                if (capacityDifference < 0) {
+                    capacityViolations++;
+                    totalCapacityShortage += Math.abs(capacityDifference);
+                } else {
+                    totalUnusedCapacity += capacityDifference;
+                }
             }
 
             if (requiresRoom && hasAssignedRoom) {
@@ -103,21 +110,27 @@ public class TimetablingSolutionEvaluator {
         int classGroupTimeConflicts = countOverlappingIntervals(intervalsByClassGroupAndDate);
 
         int totalPenalty =
-                capacityViolations * 3 +
-                missingRoomAssignments * 5 +
-                unknownRoomAssignments * 4 +
-                roomTimeConflicts * 8 +
-                classGroupTimeConflicts * 8 +
-                featureMismatches * 6;
+                invalidRoomAssignments * TimetablingPenaltyWeights.INVALID_ROOM_ASSIGNMENT +
+                missingRoomAssignments * TimetablingPenaltyWeights.MISSING_ROOM_ASSIGNMENT +
+                unknownRoomAssignments * TimetablingPenaltyWeights.UNKNOWN_ROOM_ASSIGNMENT +
+                capacityViolations * TimetablingPenaltyWeights.CAPACITY_VIOLATION +
+                totalCapacityShortage * TimetablingPenaltyWeights.CAPACITY_SHORTAGE_PER_SEAT +
+                roomTimeConflicts * TimetablingPenaltyWeights.ROOM_TIME_CONFLICT +
+                classGroupTimeConflicts * TimetablingPenaltyWeights.CLASS_GROUP_TIME_CONFLICT +
+                featureMismatches * TimetablingPenaltyWeights.FEATURE_MISMATCH +
+                totalUnusedCapacity * TimetablingPenaltyWeights.UNUSED_CAPACITY_PER_SEAT;
 
         return new TimetablingSolutionEvaluation(
                 totalEntries,
+                invalidRoomAssignments,
                 capacityViolations,
+                totalCapacityShortage,
                 missingRoomAssignments,
                 unknownRoomAssignments,
                 roomTimeConflicts,
                 classGroupTimeConflicts,
                 featureMismatches,
+                totalUnusedCapacity,
                 totalPenalty
         );
     }

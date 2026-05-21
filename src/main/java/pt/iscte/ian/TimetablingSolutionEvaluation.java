@@ -3,31 +3,40 @@ package pt.iscte.ian;
 public class TimetablingSolutionEvaluation {
 
     private final int totalEntries;
+    private final int invalidRoomAssignments;
     private final int capacityViolations;
+    private final int totalCapacityShortage;
     private final int missingRoomAssignments;
     private final int unknownRoomAssignments;
     private final int roomTimeConflicts;
     private final int classGroupTimeConflicts;
     private final int featureMismatches;
+    private final int totalUnusedCapacity;
     private final int totalPenalty;
 
     public TimetablingSolutionEvaluation(
             int totalEntries,
+            int invalidRoomAssignments,
             int capacityViolations,
+            int totalCapacityShortage,
             int missingRoomAssignments,
             int unknownRoomAssignments,
             int roomTimeConflicts,
             int classGroupTimeConflicts,
             int featureMismatches,
+            int totalUnusedCapacity,
             int totalPenalty
     ) {
         this.totalEntries = totalEntries;
+        this.invalidRoomAssignments = invalidRoomAssignments;
         this.capacityViolations = capacityViolations;
+        this.totalCapacityShortage = totalCapacityShortage;
         this.missingRoomAssignments = missingRoomAssignments;
         this.unknownRoomAssignments = unknownRoomAssignments;
         this.roomTimeConflicts = roomTimeConflicts;
         this.classGroupTimeConflicts = classGroupTimeConflicts;
         this.featureMismatches = featureMismatches;
+        this.totalUnusedCapacity = totalUnusedCapacity;
         this.totalPenalty = totalPenalty;
     }
 
@@ -35,8 +44,16 @@ public class TimetablingSolutionEvaluation {
         return totalEntries;
     }
 
+    public int getInvalidRoomAssignments() {
+        return invalidRoomAssignments;
+    }
+
     public int getCapacityViolations() {
         return capacityViolations;
+    }
+
+    public int getTotalCapacityShortage() {
+        return totalCapacityShortage;
     }
 
     public int getMissingRoomAssignments() {
@@ -57,6 +74,10 @@ public class TimetablingSolutionEvaluation {
 
     public int getFeatureMismatches() {
         return featureMismatches;
+    }
+
+    public int getTotalUnusedCapacity() {
+        return totalUnusedCapacity;
     }
 
     public int getTotalPenalty() {
@@ -91,12 +112,15 @@ public class TimetablingSolutionEvaluation {
     public String toString() {
         return "TimetablingSolutionEvaluation{" +
                 "totalEntries=" + totalEntries +
+                ", invalidRoomAssignments=" + invalidRoomAssignments +
                 ", capacityViolations=" + capacityViolations +
+                ", totalCapacityShortage=" + totalCapacityShortage +
                 ", missingRoomAssignments=" + missingRoomAssignments +
                 ", unknownRoomAssignments=" + unknownRoomAssignments +
                 ", roomTimeConflicts=" + roomTimeConflicts +
                 ", classGroupTimeConflicts=" + classGroupTimeConflicts +
                 ", featureMismatches=" + featureMismatches +
+                ", totalUnusedCapacity=" + totalUnusedCapacity +
                 ", totalPenalty=" + totalPenalty +
                 ", capacityViolationRate=" + getCapacityViolationRate() +
                 ", missingRoomRate=" + getMissingRoomRate() +

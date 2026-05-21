@@ -102,12 +102,12 @@ public class TimetablingAssignmentEvaluator {
         }
 
         int totalPenalty =
-                invalidRoomAssignments * 10000 +
-                capacityViolations * 1000 +
-                totalCapacityShortage * 100 +
-                roomTimeConflicts * 50 +
-                featureMismatches * 500 +
-                totalUnusedCapacity;
+                invalidRoomAssignments * TimetablingPenaltyWeights.INVALID_ROOM_ASSIGNMENT +
+                capacityViolations * TimetablingPenaltyWeights.CAPACITY_VIOLATION +
+                totalCapacityShortage * TimetablingPenaltyWeights.CAPACITY_SHORTAGE_PER_SEAT +
+                roomTimeConflicts * TimetablingPenaltyWeights.ROOM_TIME_CONFLICT +
+                featureMismatches * TimetablingPenaltyWeights.FEATURE_MISMATCH +
+                totalUnusedCapacity * TimetablingPenaltyWeights.UNUSED_CAPACITY_PER_SEAT;
 
         return new TimetablingAssignmentEvaluation(
                 assignedEntries,
