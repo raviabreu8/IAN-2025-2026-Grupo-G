@@ -17,7 +17,7 @@ public class ExecutionReportWriter {
         OptimizationResult result,
         String finalLlmResponse,
         DatasetQualityReport datasetQualityReport,
-        TimetablingEvaluation timetablingEvaluation,
+        TimetablingSolutionEvaluation timetablingEvaluation,
         TimetablingOptimizationInstance optimizationInstance,
         TimetablingAssignmentEvaluation greedyEvaluation
     ) throws Exception {

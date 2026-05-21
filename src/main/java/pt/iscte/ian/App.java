@@ -31,8 +31,8 @@ public class App {
             System.out.println("Resumo de qualidade dos datasets:");
             System.out.println(qualityReport);
 
-            TimetablingEvaluator timetablingEvaluator = new TimetablingEvaluator();
-            TimetablingEvaluation timetablingEvaluation = timetablingEvaluator.evaluate(dataset);
+            TimetablingSolutionEvaluator timetablingSolutionEvaluator = new TimetablingSolutionEvaluator();
+            TimetablingSolutionEvaluation timetablingEvaluation = timetablingSolutionEvaluator.evaluate(dataset);
 
             System.out.println("Avaliação do horário atual:");
             System.out.println(timetablingEvaluation);
