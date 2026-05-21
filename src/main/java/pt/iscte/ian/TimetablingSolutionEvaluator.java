@@ -116,7 +116,6 @@ public class TimetablingSolutionEvaluator {
                 capacityViolations * TimetablingPenaltyWeights.CAPACITY_VIOLATION +
                 totalCapacityShortage * TimetablingPenaltyWeights.CAPACITY_SHORTAGE_PER_SEAT +
                 roomTimeConflicts * TimetablingPenaltyWeights.ROOM_TIME_CONFLICT +
-                classGroupTimeConflicts * TimetablingPenaltyWeights.CLASS_GROUP_TIME_CONFLICT +
                 featureMismatches * TimetablingPenaltyWeights.FEATURE_MISMATCH +
                 totalUnusedCapacity * TimetablingPenaltyWeights.UNUSED_CAPACITY_PER_SEAT;
 
