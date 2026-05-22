@@ -72,6 +72,7 @@ public class JMetalTimetablingNsgaIIRunner {
                 ? new int[0]
                 : extractRoomIndexes(bestPenaltySolution);
 
+        TimetablingAssignmentEvaluation bestPenaltyEvaluation = null;
         double unusedCapacityOfBestPenaltySolution = Double.NaN;
 
         if (bestPenaltyRoomIndexes.length > 0) {
@@ -81,11 +82,13 @@ public class JMetalTimetablingNsgaIIRunner {
             TimetablingAssignmentEvaluator evaluator =
                     new TimetablingAssignmentEvaluator(dataset, instance);
 
-            TimetablingAssignmentEvaluation bestPenaltyEvaluation =
-                    evaluator.evaluate(bestPenaltyAssignment);
+            bestPenaltyEvaluation = evaluator.evaluate(bestPenaltyAssignment);
 
             unusedCapacityOfBestPenaltySolution =
                     bestPenaltyEvaluation.getTotalUnusedCapacity();
+
+            System.out.println("Avaliação da melhor solução NSGA-II:");
+            System.out.println(bestPenaltyEvaluation);
         }
 
         return new OptimizationResult(
