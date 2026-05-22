@@ -59,13 +59,26 @@ public class App {
             System.out.println("Número de salas candidatas: "
                     + optimizationInstance.getNumberOfCandidateRooms());
             
-            GreedyTimetablingAssignmentBuilder greedyAssignmentBuilder = new GreedyTimetablingAssignmentBuilder();
-            TimetablingAssignment greedyAssignment = greedyAssignmentBuilder.build(optimizationInstance);
-
             TimetablingAssignmentEvaluator assignmentEvaluator =
                     new TimetablingAssignmentEvaluator(dataset, optimizationInstance);
 
-            TimetablingAssignmentEvaluation assignmentEvaluation = assignmentEvaluator.evaluate(greedyAssignment);
+            OriginalTimetablingAssignmentBuilder originalAssignmentBuilder =
+                    new OriginalTimetablingAssignmentBuilder();
+
+            TimetablingAssignment originalAssignment =
+                    originalAssignmentBuilder.build(optimizationInstance);
+
+            TimetablingAssignmentEvaluation originalAssignmentEvaluation =
+                    assignmentEvaluator.evaluate(originalAssignment);
+
+            System.out.println("Avaliação da atribuição original nas entradas otimizadas:");
+            System.out.println(originalAssignmentEvaluation);
+
+            GreedyTimetablingAssignmentBuilder greedyAssignmentBuilder = new GreedyTimetablingAssignmentBuilder();
+            TimetablingAssignment greedyAssignment = greedyAssignmentBuilder.build(optimizationInstance);
+
+            TimetablingAssignmentEvaluation assignmentEvaluation =
+                    assignmentEvaluator.evaluate(greedyAssignment);
 
             System.out.println("Avaliação da atribuição greedy inicial:");
             System.out.println(assignmentEvaluation);
