@@ -56,8 +56,7 @@ public class JMetalTimetablingNsgaIIRunner {
 
             System.out.println(
                     "Solução " + (i + 1) +
-                            " -> penalização = " + solution.objectives()[0] +
-                            ", capacidade desperdiçada = " + solution.objectives()[1]
+                            " -> penalização = " + solution.objectives()[0]
             );
         }
 
@@ -65,19 +64,29 @@ public class JMetalTimetablingNsgaIIRunner {
                 .min((s1, s2) -> Double.compare(s1.objectives()[0], s2.objectives()[0]))
                 .orElse(null);
 
-        IntegerSolution bestUnusedCapacitySolution = result.stream()
-                .min((s1, s2) -> Double.compare(s1.objectives()[1], s2.objectives()[1]))
-                .orElse(null);
 
         double bestPenalty = bestPenaltySolution == null ? Double.NaN : bestPenaltySolution.objectives()[0];
-        double unusedCapacityOfBestPenaltySolution = bestPenaltySolution == null ? Double.NaN : bestPenaltySolution.objectives()[1];
 
-        double bestUnusedCapacity = bestUnusedCapacitySolution == null ? Double.NaN : bestUnusedCapacitySolution.objectives()[1];
-        double penaltyOfBestUnusedCapacitySolution = bestUnusedCapacitySolution == null ? Double.NaN : bestUnusedCapacitySolution.objectives()[0];
 
         int[] bestPenaltyRoomIndexes = bestPenaltySolution == null
                 ? new int[0]
                 : extractRoomIndexes(bestPenaltySolution);
+
+        double unusedCapacityOfBestPenaltySolution = Double.NaN;
+
+        if (bestPenaltyRoomIndexes.length > 0) {
+            TimetablingAssignment bestPenaltyAssignment =
+                    new TimetablingAssignment(bestPenaltyRoomIndexes);
+
+            TimetablingAssignmentEvaluator evaluator =
+                    new TimetablingAssignmentEvaluator(dataset, instance);
+
+            TimetablingAssignmentEvaluation bestPenaltyEvaluation =
+                    evaluator.evaluate(bestPenaltyAssignment);
+
+            unusedCapacityOfBestPenaltySolution =
+                    bestPenaltyEvaluation.getTotalUnusedCapacity();
+        }
 
         return new OptimizationResult(
                 config.getAlgorithm(),
@@ -85,8 +94,6 @@ public class JMetalTimetablingNsgaIIRunner {
                 numberOfSolutions,
                 bestPenalty,
                 unusedCapacityOfBestPenaltySolution,
-                bestUnusedCapacity,
-                penaltyOfBestUnusedCapacitySolution,
                 bestPenaltyRoomIndexes
         );
     }

@@ -32,7 +32,7 @@ public class TimetablingRoomAssignmentProblem implements Problem<IntegerSolution
 
     @Override
     public int numberOfObjectives() {
-        return 2;
+        return 1;
     }
 
     @Override
@@ -58,7 +58,6 @@ public class TimetablingRoomAssignmentProblem implements Problem<IntegerSolution
         TimetablingAssignmentEvaluation evaluation = evaluator.evaluate(assignment);
 
         solution.objectives()[0] = evaluation.getTotalPenalty();
-        solution.objectives()[1] = evaluation.getTotalUnusedCapacity();
 
         return solution;
     }

@@ -40,7 +40,7 @@ public class App {
             RoomFeatureAnalyzer roomFeatureAnalyzer = new RoomFeatureAnalyzer();
             RoomFeatureAnalysisReport roomFeatureReport = roomFeatureAnalyzer.analyze(dataset);
 
-            System.out.println("AnÃ¡lise de compatibilidade das caracterÃ­sticas das salas:");
+            System.out.println("Análise de compatibilidade das características das salas:");
             System.out.println(roomFeatureReport);
 
             TimetablingOptimizationInstanceBuilder instanceBuilder = new TimetablingOptimizationInstanceBuilder();
@@ -94,8 +94,7 @@ public class App {
             System.out.println("Número de variáveis: " + timetablingProblem.numberOfVariables());
             System.out.println("Número de objetivos: " + timetablingProblem.numberOfObjectives());
             System.out.println("Avaliação de uma solução aleatória:");
-            System.out.println("Objetivo 1 - penalização total: " + randomSolution.objectives()[0]);
-            System.out.println("Objetivo 2 - capacidade desperdiçada: " + randomSolution.objectives()[1]);
+            System.out.println("Objetivo único - penalização total: " + randomSolution.objectives()[0]);
 
             OllamaClient ollamaClient = new OllamaClient(
                     applicationConfig.getOllamaApiUrl(),
@@ -192,7 +191,7 @@ public class App {
             optimizedAssignmentExporter.export(optimizationInstance, result);
 
         } catch (Exception e) {
-            System.out.println("Erro na aplicação:");
+            System.out.println("Erro na aplicaçã:");
             System.out.println(e.getMessage());
         }
     }

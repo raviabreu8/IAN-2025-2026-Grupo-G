@@ -7,13 +7,8 @@ public class OptimizationResult {
     private final String algorithm;
     private final long executionTimeMs;
     private final int numberOfSolutions;
-
     private final double bestPenalty;
     private final double unusedCapacityOfBestPenaltySolution;
-
-    private final double bestUnusedCapacity;
-    private final double penaltyOfBestUnusedCapacitySolution;
-
     private final int[] bestPenaltyRoomIndexes;
 
     public OptimizationResult(String algorithm, long executionTimeMs, int numberOfSolutions) {
@@ -23,8 +18,6 @@ public class OptimizationResult {
                 numberOfSolutions,
                 Double.NaN,
                 Double.NaN,
-                Double.NaN,
-                Double.NaN,
                 new int[0]
         );
     }
@@ -35,29 +28,6 @@ public class OptimizationResult {
             int numberOfSolutions,
             double bestPenalty,
             double unusedCapacityOfBestPenaltySolution,
-            double bestUnusedCapacity,
-            double penaltyOfBestUnusedCapacitySolution
-    ) {
-        this(
-                algorithm,
-                executionTimeMs,
-                numberOfSolutions,
-                bestPenalty,
-                unusedCapacityOfBestPenaltySolution,
-                bestUnusedCapacity,
-                penaltyOfBestUnusedCapacitySolution,
-                new int[0]
-        );
-    }
-
-    public OptimizationResult(
-            String algorithm,
-            long executionTimeMs,
-            int numberOfSolutions,
-            double bestPenalty,
-            double unusedCapacityOfBestPenaltySolution,
-            double bestUnusedCapacity,
-            double penaltyOfBestUnusedCapacitySolution,
             int[] bestPenaltyRoomIndexes
     ) {
         this.algorithm = algorithm;
@@ -65,8 +35,6 @@ public class OptimizationResult {
         this.numberOfSolutions = numberOfSolutions;
         this.bestPenalty = bestPenalty;
         this.unusedCapacityOfBestPenaltySolution = unusedCapacityOfBestPenaltySolution;
-        this.bestUnusedCapacity = bestUnusedCapacity;
-        this.penaltyOfBestUnusedCapacitySolution = penaltyOfBestUnusedCapacitySolution;
         this.bestPenaltyRoomIndexes = Arrays.copyOf(bestPenaltyRoomIndexes, bestPenaltyRoomIndexes.length);
     }
 
@@ -90,14 +58,6 @@ public class OptimizationResult {
         return unusedCapacityOfBestPenaltySolution;
     }
 
-    public double getBestUnusedCapacity() {
-        return bestUnusedCapacity;
-    }
-
-    public double getPenaltyOfBestUnusedCapacitySolution() {
-        return penaltyOfBestUnusedCapacitySolution;
-    }
-
     public int[] getBestPenaltyRoomIndexes() {
         return Arrays.copyOf(bestPenaltyRoomIndexes, bestPenaltyRoomIndexes.length);
     }
@@ -107,10 +67,7 @@ public class OptimizationResult {
     }
 
     public boolean hasBestObjectiveValues() {
-        return !Double.isNaN(bestPenalty)
-                && !Double.isNaN(unusedCapacityOfBestPenaltySolution)
-                && !Double.isNaN(bestUnusedCapacity)
-                && !Double.isNaN(penaltyOfBestUnusedCapacitySolution);
+        return !Double.isNaN(bestPenalty);
     }
 
     @Override
@@ -121,8 +78,6 @@ public class OptimizationResult {
                 ", numberOfSolutions=" + numberOfSolutions +
                 ", bestPenalty=" + bestPenalty +
                 ", unusedCapacityOfBestPenaltySolution=" + unusedCapacityOfBestPenaltySolution +
-                ", bestUnusedCapacity=" + bestUnusedCapacity +
-                ", penaltyOfBestUnusedCapacitySolution=" + penaltyOfBestUnusedCapacitySolution +
                 ", bestPenaltyRoomIndexes=" + bestPenaltyRoomIndexes.length +
                 '}';
     }

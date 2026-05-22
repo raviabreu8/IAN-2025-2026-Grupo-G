@@ -95,8 +95,6 @@ public class ExecutionReportWriter {
         if (result.hasBestObjectiveValues()) {
             resultNode.put("best_penalty", result.getBestPenalty());
             resultNode.put("unused_capacity_of_best_penalty_solution", result.getUnusedCapacityOfBestPenaltySolution());
-            resultNode.put("best_unused_capacity", result.getBestUnusedCapacity());
-            resultNode.put("penalty_of_best_unused_capacity_solution", result.getPenaltyOfBestUnusedCapacitySolution());
         }
 
         report.set("configuration", configurationNode);
