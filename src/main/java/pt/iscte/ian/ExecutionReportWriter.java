@@ -97,6 +97,22 @@ public class ExecutionReportWriter {
             resultNode.put("unused_capacity_of_best_penalty_solution", result.getUnusedCapacityOfBestPenaltySolution());
         }
 
+        if (result.hasBestPenaltyEvaluation()) {
+            TimetablingAssignmentEvaluation bestEvaluation = result.getBestPenaltyEvaluation();
+
+            ObjectNode bestSolutionEvaluationNode = mapper.createObjectNode();
+            bestSolutionEvaluationNode.put("assigned_entries", bestEvaluation.getAssignedEntries());
+            bestSolutionEvaluationNode.put("invalid_room_assignments", bestEvaluation.getInvalidRoomAssignments());
+            bestSolutionEvaluationNode.put("capacity_violations", bestEvaluation.getCapacityViolations());
+            bestSolutionEvaluationNode.put("total_capacity_shortage", bestEvaluation.getTotalCapacityShortage());
+            bestSolutionEvaluationNode.put("room_time_conflicts", bestEvaluation.getRoomTimeConflicts());
+            bestSolutionEvaluationNode.put("feature_mismatches", bestEvaluation.getFeatureMismatches());
+            bestSolutionEvaluationNode.put("total_unused_capacity", bestEvaluation.getTotalUnusedCapacity());
+            bestSolutionEvaluationNode.put("total_penalty", bestEvaluation.getTotalPenalty());
+
+            resultNode.set("best_solution_evaluation", bestSolutionEvaluationNode);
+        }
+
         report.set("configuration", configurationNode);
         report.set("result", resultNode);
 

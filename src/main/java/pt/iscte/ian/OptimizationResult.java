@@ -10,6 +10,7 @@ public class OptimizationResult {
     private final double bestPenalty;
     private final double unusedCapacityOfBestPenaltySolution;
     private final int[] bestPenaltyRoomIndexes;
+    private final TimetablingAssignmentEvaluation bestPenaltyEvaluation;
 
     public OptimizationResult(String algorithm, long executionTimeMs, int numberOfSolutions) {
         this(
@@ -18,7 +19,8 @@ public class OptimizationResult {
                 numberOfSolutions,
                 Double.NaN,
                 Double.NaN,
-                new int[0]
+                new int[0],
+                null
         );
     }
 
@@ -30,12 +32,33 @@ public class OptimizationResult {
             double unusedCapacityOfBestPenaltySolution,
             int[] bestPenaltyRoomIndexes
     ) {
+        this(
+                algorithm,
+                executionTimeMs,
+                numberOfSolutions,
+                bestPenalty,
+                unusedCapacityOfBestPenaltySolution,
+                bestPenaltyRoomIndexes,
+                null
+        );
+    }
+
+    public OptimizationResult(
+            String algorithm,
+            long executionTimeMs,
+            int numberOfSolutions,
+            double bestPenalty,
+            double unusedCapacityOfBestPenaltySolution,
+            int[] bestPenaltyRoomIndexes,
+            TimetablingAssignmentEvaluation bestPenaltyEvaluation
+    ) {
         this.algorithm = algorithm;
         this.executionTimeMs = executionTimeMs;
         this.numberOfSolutions = numberOfSolutions;
         this.bestPenalty = bestPenalty;
         this.unusedCapacityOfBestPenaltySolution = unusedCapacityOfBestPenaltySolution;
         this.bestPenaltyRoomIndexes = Arrays.copyOf(bestPenaltyRoomIndexes, bestPenaltyRoomIndexes.length);
+        this.bestPenaltyEvaluation = bestPenaltyEvaluation;
     }
 
     public String getAlgorithm() {
@@ -62,12 +85,20 @@ public class OptimizationResult {
         return Arrays.copyOf(bestPenaltyRoomIndexes, bestPenaltyRoomIndexes.length);
     }
 
+    public TimetablingAssignmentEvaluation getBestPenaltyEvaluation() {
+        return bestPenaltyEvaluation;
+    }
+
     public boolean hasBestPenaltyRoomIndexes() {
         return bestPenaltyRoomIndexes.length > 0;
     }
 
     public boolean hasBestObjectiveValues() {
         return !Double.isNaN(bestPenalty);
+    }
+
+    public boolean hasBestPenaltyEvaluation() {
+        return bestPenaltyEvaluation != null;
     }
 
     @Override

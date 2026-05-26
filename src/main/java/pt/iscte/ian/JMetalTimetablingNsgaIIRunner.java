@@ -4,7 +4,6 @@ import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.algorithm.multiobjective.nsgaii.NSGAIIBuilder;
 import org.uma.jmetal.operator.crossover.impl.IntegerSBXCrossover;
 import org.uma.jmetal.operator.mutation.impl.IntegerPolynomialMutation;
-import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.integersolution.IntegerSolution;
 
 import java.util.List;
@@ -18,7 +17,7 @@ public class JMetalTimetablingNsgaIIRunner {
     ) {
         System.out.println("A executar NSGA-II real com JMetal no problema simplificado de timetabling...");
 
-        Problem<IntegerSolution> problem = new TimetablingRoomAssignmentProblem(
+        TimetablingRoomAssignmentProblem problem = new TimetablingRoomAssignmentProblem(
                 dataset,
                 instance
         );
@@ -70,7 +69,7 @@ public class JMetalTimetablingNsgaIIRunner {
 
         int[] bestPenaltyRoomIndexes = bestPenaltySolution == null
                 ? new int[0]
-                : extractRoomIndexes(bestPenaltySolution);
+                : extractRoomIndexes(problem, bestPenaltySolution);
 
         TimetablingAssignmentEvaluation bestPenaltyEvaluation = null;
         double unusedCapacityOfBestPenaltySolution = Double.NaN;
@@ -97,17 +96,15 @@ public class JMetalTimetablingNsgaIIRunner {
                 numberOfSolutions,
                 bestPenalty,
                 unusedCapacityOfBestPenaltySolution,
-                bestPenaltyRoomIndexes
+                bestPenaltyRoomIndexes,
+                bestPenaltyEvaluation
         );
     }
 
-    private int[] extractRoomIndexes(IntegerSolution solution) {
-        int[] roomIndexes = new int[solution.variables().size()];
-
-        for (int i = 0; i < solution.variables().size(); i++) {
-            roomIndexes[i] = solution.variables().get(i);
-        }
-
-        return roomIndexes;
+    private int[] extractRoomIndexes(
+            TimetablingRoomAssignmentProblem problem,
+            IntegerSolution solution
+    ) {
+        return problem.decodeSolution(solution).getRoomIndexes();
     }
 }
