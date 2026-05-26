@@ -173,6 +173,18 @@ public class App {
                     optimizationInstance
             );
 
+            OptimizedTimetablingDatasetBuilder optimizedDatasetBuilder =
+                    new OptimizedTimetablingDatasetBuilder();
+
+            TimetablingDataset optimizedDataset =
+                    optimizedDatasetBuilder.build(dataset, optimizationInstance, result);
+
+            TimetablingSolutionEvaluation optimizedTimetablingEvaluation =
+                    timetablingSolutionEvaluator.evaluate(optimizedDataset);
+
+            System.out.println("Avaliação do horário completo após aplicação da solução NSGA-II:");
+            System.out.println(optimizedTimetablingEvaluation);
+
             System.out.println("Resultado final da execução:");
             System.out.println(result);
 
@@ -183,6 +195,7 @@ public class App {
                                 finalLlmResponse,
                                 qualityReport,
                                 timetablingEvaluation,
+                                optimizedTimetablingEvaluation,
                                 optimizationInstance,
                                 originalAssignmentEvaluation,
                                 assignmentEvaluation

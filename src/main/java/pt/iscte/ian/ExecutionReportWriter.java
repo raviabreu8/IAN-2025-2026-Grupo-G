@@ -18,6 +18,7 @@ public class ExecutionReportWriter {
         String finalLlmResponse,
         DatasetQualityReport datasetQualityReport,
         TimetablingSolutionEvaluation timetablingEvaluation,
+        TimetablingSolutionEvaluation optimizedTimetablingEvaluation,
         TimetablingOptimizationInstance optimizationInstance,
         TimetablingAssignmentEvaluation originalEvaluation,
         TimetablingAssignmentEvaluation greedyEvaluation
@@ -43,26 +44,15 @@ public class ExecutionReportWriter {
 
         report.set("dataset_quality_report", datasetNode);
 
-        ObjectNode timetablingEvaluationNode = mapper.createObjectNode();
-        timetablingEvaluationNode.put("total_entries", timetablingEvaluation.getTotalEntries());
-        timetablingEvaluationNode.put("invalid_room_assignments", timetablingEvaluation.getInvalidRoomAssignments());
-        timetablingEvaluationNode.put("capacity_violations", timetablingEvaluation.getCapacityViolations());
-        timetablingEvaluationNode.put("total_capacity_shortage", timetablingEvaluation.getTotalCapacityShortage());
-        timetablingEvaluationNode.put("missing_room_assignments", timetablingEvaluation.getMissingRoomAssignments());
-        timetablingEvaluationNode.put("unknown_room_assignments", timetablingEvaluation.getUnknownRoomAssignments());
-        timetablingEvaluationNode.put("room_time_conflicts", timetablingEvaluation.getRoomTimeConflicts());
-        timetablingEvaluationNode.put("class_group_time_conflicts", timetablingEvaluation.getClassGroupTimeConflicts());
-        timetablingEvaluationNode.put("feature_mismatches", timetablingEvaluation.getFeatureMismatches());
-        timetablingEvaluationNode.put("total_unused_capacity", timetablingEvaluation.getTotalUnusedCapacity());
-        timetablingEvaluationNode.put("total_penalty", timetablingEvaluation.getTotalPenalty());
-        timetablingEvaluationNode.put("capacity_violation_rate", timetablingEvaluation.getCapacityViolationRate());
-        timetablingEvaluationNode.put("missing_room_rate", timetablingEvaluation.getMissingRoomRate());
-        timetablingEvaluationNode.put("unknown_room_rate", timetablingEvaluation.getUnknownRoomRate());
-        timetablingEvaluationNode.put("room_time_conflict_rate", timetablingEvaluation.getRoomTimeConflictRate());
-        timetablingEvaluationNode.put("class_group_time_conflict_rate", timetablingEvaluation.getClassGroupTimeConflictRate());
-        timetablingEvaluationNode.put("feature_mismatch_rate", timetablingEvaluation.getFeatureMismatchRate());
+        report.set(
+                "timetabling_evaluation",
+                createTimetablingEvaluationNode(mapper, timetablingEvaluation)
+        );
 
-        report.set("timetabling_evaluation", timetablingEvaluationNode);
+        report.set(
+                "optimized_timetabling_evaluation",
+                createTimetablingEvaluationNode(mapper, optimizedTimetablingEvaluation)
+        );
         
         ObjectNode optimizationInstanceNode = mapper.createObjectNode();
         optimizationInstanceNode.put("entries_to_optimize", optimizationInstance.getNumberOfVariables());
@@ -151,5 +141,32 @@ public class ExecutionReportWriter {
 
         System.out.println("Cópia histórica guardada em:");
         System.out.println(historyFile.toAbsolutePath());
+    }
+
+    private ObjectNode createTimetablingEvaluationNode(
+            ObjectMapper mapper,
+            TimetablingSolutionEvaluation evaluation
+    ) {
+        ObjectNode node = mapper.createObjectNode();
+
+        node.put("total_entries", evaluation.getTotalEntries());
+        node.put("invalid_room_assignments", evaluation.getInvalidRoomAssignments());
+        node.put("capacity_violations", evaluation.getCapacityViolations());
+        node.put("total_capacity_shortage", evaluation.getTotalCapacityShortage());
+        node.put("missing_room_assignments", evaluation.getMissingRoomAssignments());
+        node.put("unknown_room_assignments", evaluation.getUnknownRoomAssignments());
+        node.put("room_time_conflicts", evaluation.getRoomTimeConflicts());
+        node.put("class_group_time_conflicts", evaluation.getClassGroupTimeConflicts());
+        node.put("feature_mismatches", evaluation.getFeatureMismatches());
+        node.put("total_unused_capacity", evaluation.getTotalUnusedCapacity());
+        node.put("total_penalty", evaluation.getTotalPenalty());
+        node.put("capacity_violation_rate", evaluation.getCapacityViolationRate());
+        node.put("missing_room_rate", evaluation.getMissingRoomRate());
+        node.put("unknown_room_rate", evaluation.getUnknownRoomRate());
+        node.put("room_time_conflict_rate", evaluation.getRoomTimeConflictRate());
+        node.put("class_group_time_conflict_rate", evaluation.getClassGroupTimeConflictRate());
+        node.put("feature_mismatch_rate", evaluation.getFeatureMismatchRate());
+
+        return node;
     }
 }
