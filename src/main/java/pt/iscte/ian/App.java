@@ -184,11 +184,15 @@ public class App {
                                 qualityReport,
                                 timetablingEvaluation,
                                 optimizationInstance,
+                                originalAssignmentEvaluation,
                                 assignmentEvaluation
             );
 
             OptimizedAssignmentExporter optimizedAssignmentExporter = new OptimizedAssignmentExporter();
             optimizedAssignmentExporter.export(optimizationInstance, result);
+
+            OptimizedScheduleExporter optimizedScheduleExporter = new OptimizedScheduleExporter();
+            optimizedScheduleExporter.export(dataset, optimizationInstance, result);
 
         } catch (Exception e) {
             System.out.println("Erro na aplicaçã:");

@@ -19,6 +19,7 @@ public class ExecutionReportWriter {
         DatasetQualityReport datasetQualityReport,
         TimetablingSolutionEvaluation timetablingEvaluation,
         TimetablingOptimizationInstance optimizationInstance,
+        TimetablingAssignmentEvaluation originalEvaluation,
         TimetablingAssignmentEvaluation greedyEvaluation
     ) throws Exception {
         Path outputDirectory = Path.of("outputs");
@@ -38,6 +39,7 @@ public class ExecutionReportWriter {
         datasetNode.put("entries_with_capacity_problem", datasetQualityReport.getEntriesWithCapacityProblem());
         datasetNode.put("entries_without_room", datasetQualityReport.getEntriesWithoutRoom());
         datasetNode.put("entries_with_unknown_room", datasetQualityReport.getEntriesWithUnknownRoom());
+        datasetNode.put("entries_not_requiring_room", datasetQualityReport.getEntriesNotRequiringRoom());
 
         report.set("dataset_quality_report", datasetNode);
 
@@ -67,6 +69,18 @@ public class ExecutionReportWriter {
         optimizationInstanceNode.put("candidate_rooms", optimizationInstance.getNumberOfCandidateRooms());
 
         report.set("optimization_instance", optimizationInstanceNode);
+
+        ObjectNode originalBaselineNode = mapper.createObjectNode();
+        originalBaselineNode.put("assigned_entries", originalEvaluation.getAssignedEntries());
+        originalBaselineNode.put("invalid_room_assignments", originalEvaluation.getInvalidRoomAssignments());
+        originalBaselineNode.put("capacity_violations", originalEvaluation.getCapacityViolations());
+        originalBaselineNode.put("total_capacity_shortage", originalEvaluation.getTotalCapacityShortage());
+        originalBaselineNode.put("room_time_conflicts", originalEvaluation.getRoomTimeConflicts());
+        originalBaselineNode.put("feature_mismatches", originalEvaluation.getFeatureMismatches());
+        originalBaselineNode.put("total_unused_capacity", originalEvaluation.getTotalUnusedCapacity());
+        originalBaselineNode.put("total_penalty", originalEvaluation.getTotalPenalty());
+
+        report.set("original_baseline", originalBaselineNode);
 
         ObjectNode greedyNode = mapper.createObjectNode();
         greedyNode.put("assigned_entries", greedyEvaluation.getAssignedEntries());
