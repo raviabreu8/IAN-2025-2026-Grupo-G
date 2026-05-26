@@ -16,6 +16,9 @@ public class ExecutionReportWriter {
         AlgorithmConfiguration config,
         OptimizationResult result,
         String finalLlmResponse,
+        String problemDescriptionJson,
+        String systemPrompt,
+        String algorithmRecommendationPrompt,
         DatasetQualityReport datasetQualityReport,
         TimetablingSolutionEvaluation timetablingEvaluation,
         TimetablingSolutionEvaluation optimizedTimetablingEvaluation,
@@ -29,6 +32,12 @@ public class ExecutionReportWriter {
         ObjectNode report = mapper.createObjectNode();
 
         report.put("generated_at", LocalDateTime.now().toString());
+
+        ObjectNode llmRequestNode = mapper.createObjectNode();
+        llmRequestNode.set("problem_description", mapper.readTree(problemDescriptionJson));
+        llmRequestNode.put("system_prompt", systemPrompt);
+        llmRequestNode.put("algorithm_recommendation_prompt", algorithmRecommendationPrompt);
+        report.set("llm_request", llmRequestNode);
 
         JsonNode llmRecommendationNode = mapper.readTree(finalLlmResponse);
         report.set("llm_recommendation", llmRecommendationNode);

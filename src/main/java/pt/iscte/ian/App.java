@@ -109,7 +109,7 @@ public class App {
             String problemDescriptionJson = problemLoader.loadProblemDescription();
 
             String systemPrompt = promptBuilder.buildSystemPrompt();
-            String userPrompt = promptBuilder.buildAlgorithmRecommendationPrompt(
+            String algorithmRecommendationPrompt = promptBuilder.buildAlgorithmRecommendationPrompt(
                     problemDescriptionJson,
                     qualityReport,
                     optimizationInstance
@@ -117,7 +117,7 @@ public class App {
 
             AlgorithmRecommendationValidator validator = new AlgorithmRecommendationValidator(algorithmCatalog);
 
-            String llmResponse = ollamaClient.generateResponse(systemPrompt, userPrompt);
+            String llmResponse = ollamaClient.generateResponse(systemPrompt, algorithmRecommendationPrompt);
             String finalLlmResponse = llmResponse;
 
             System.out.println("Resposta JSON do LLM:");
@@ -197,6 +197,9 @@ public class App {
                                 config,
                                 result,
                                 finalLlmResponse,
+                                problemDescriptionJson,
+                                systemPrompt,
+                                algorithmRecommendationPrompt,
                                 qualityReport,
                                 timetablingEvaluation,
                                 optimizedTimetablingEvaluation,
@@ -212,7 +215,7 @@ public class App {
             optimizedScheduleExporter.export(dataset, optimizationInstance, result);
 
         } catch (Exception e) {
-            System.out.println("Erro na aplicaçã:");
+            System.out.println("Erro na aplicação:");
             System.out.println(e.getMessage());
         }
     }
