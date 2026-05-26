@@ -1,47 +1,77 @@
 {
   "task": "recommend_optimization_algorithm",
   "problem": {
-    "type": "timetabling",
-    "description": "Alocação de aulas a salas e horários num contexto universitário.",
+    "type": "timetabling_room_assignment",
+    "description": "Problema de timetabling simplificado, formulado como realocacao de salas para aulas com horarios fixos.",
     "domain": "university_scheduling",
-    "objectives": [
+    "formulation": {
+      "decision": "Escolher uma sala para cada aula problematica incluida na instancia de otimizacao.",
+      "changes_days_or_times": false,
+      "optimizes_teachers": false,
+      "teacher_information_available": false,
+      "fixed_elements": [
+        "dia da aula",
+        "hora de inicio",
+        "hora de fim",
+        "curso",
+        "unidade curricular",
+        "turno",
+        "grupo/turma"
+      ]
+    },
+    "objective": {
+      "type": "single_objective",
+      "name": "minimize_total_weighted_penalty",
+      "description": "Minimizar uma penalizacao ponderada total associada a qualidade da atribuicao de salas."
+    },
+    "penalty_components": [
       {
-        "name": "minimize_schedule_conflicts",
-        "description": "Minimizar conflitos de horários entre aulas, professores, salas e turmas."
+        "name": "invalid_room_assignments",
+        "description": "Penaliza atribuicoes de salas invalidas."
       },
       {
-        "name": "minimize_teacher_conflicts",
-        "description": "Evitar que o mesmo professor esteja associado a duas aulas no mesmo horário."
+        "name": "capacity_violations",
+        "description": "Penaliza salas com capacidade inferior ao numero de estudantes inscritos."
       },
       {
-        "name": "maximize_room_capacity_usage",
-        "description": "Utilizar salas com capacidade adequada ao número de estudantes."
+        "name": "capacity_shortage",
+        "description": "Penaliza o numero de lugares em falta quando a sala e demasiado pequena."
       },
       {
-        "name": "minimize_constraint_violations",
-        "description": "Reduzir penalizações associadas à violação de restrições fortes e fracas."
+        "name": "room_time_conflicts",
+        "description": "Penaliza conflitos em que a mesma sala e atribuida a mais do que uma aula no mesmo intervalo temporal."
+      },
+      {
+        "name": "feature_mismatches",
+        "description": "Penaliza incompatibilidades entre a caracteristica de sala pedida e as caracteristicas da sala atribuida."
+      },
+      {
+        "name": "unused_capacity",
+        "description": "Penaliza capacidade desperdicada quando a sala atribuida e maior do que o necessario."
       }
     ],
-    "constraints": [
+    "constraints_considered": [
       {
-        "name": "no_teacher_overlap",
-        "type": "hard",
-        "description": "Um professor não pode estar em duas aulas ao mesmo tempo."
+        "name": "room_capacity_must_be_sufficient",
+        "description": "A capacidade da sala deve ser adequada ao numero de estudantes."
       },
       {
         "name": "no_room_overlap",
-        "type": "hard",
-        "description": "Uma sala não pode ter duas aulas ao mesmo tempo."
+        "description": "Uma sala nao deve ter duas aulas no mesmo intervalo temporal."
       },
       {
-        "name": "room_capacity_must_be_sufficient",
-        "type": "hard",
-        "description": "A capacidade da sala deve ser suficiente para a turma."
+        "name": "room_feature_compatibility",
+        "description": "A sala atribuida deve ser compativel com a caracteristica de sala pedida, quando existe."
+      }
+    ],
+    "not_considered": [
+      {
+        "name": "teacher_conflicts",
+        "reason": "O dataset usado nao contem informacao de docentes."
       },
       {
-        "name": "no_class_overlap_for_same_group",
-        "type": "hard",
-        "description": "Aulas da mesma turma ou grupo não devem sobrepor-se."
+        "name": "day_or_time_changes",
+        "reason": "A versao atual mantem dias e horas fixos e apenas realoca salas."
       }
     ]
   },

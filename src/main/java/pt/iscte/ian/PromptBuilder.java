@@ -28,20 +28,15 @@ public class PromptBuilder {
         prompt.append("- A aplicação executa algoritmos com a framework JMetal.\n");
         prompt.append("- A resposta do LLM será processada automaticamente, por isso deves responder apenas com JSON válido.\n\n");
 
+        prompt.append("Descrição detalhada do problema em JSON:\n");
+        prompt.append(problemDescriptionJson).append("\n\n");
+
         prompt.append("Catálogo de algoritmos executáveis nesta versão:\n");
         prompt.append("- NSGA-II: implementado e executável na aplicação.\n\n");
 
         prompt.append("Algoritmos que podem ser mencionados apenas como alternativas futuras, mas não devem ser escolhidos como principal:\n");
         prompt.append("- NSGA-III: não implementado nesta versão.\n");
         prompt.append("- MOEA/D: não implementado nesta versão.\n\n");
-
-        prompt.append("Formulação atual do problema:\n");
-        prompt.append("- Tipo: timetabling simplificado, formulado como realocação de salas com horários fixos.\n");
-        prompt.append("- A aplicação NÃO altera dias nem horas das aulas.\n");
-        prompt.append("- A aplicação NÃO otimiza professores, porque o dataset não contém informação de docentes.\n");
-        prompt.append("- A decisão é escolher uma sala para cada aula problemática.\n");
-        prompt.append("- O objetivo atual é único: minimizar uma penalização ponderada total.\n");
-        prompt.append("- A penalização agrega: salas inválidas, capacidade insuficiente, lugares em falta, conflitos de sala, incompatibilidade de características na sala pedida vs. a sala atribuída e capacidade desperdiçada.\n\n");
 
         prompt.append("Dados globais do dataset:\n");
         prompt.append("- Número de salas: ").append(datasetQualityReport.getNumberOfRooms()).append("\n");
