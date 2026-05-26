@@ -109,7 +109,11 @@ public class App {
             String problemDescriptionJson = problemLoader.loadProblemDescription();
 
             String systemPrompt = promptBuilder.buildSystemPrompt();
-            String userPrompt = promptBuilder.buildAlgorithmRecommendationPrompt(problemDescriptionJson, qualityReport);
+            String userPrompt = promptBuilder.buildAlgorithmRecommendationPrompt(
+                    problemDescriptionJson,
+                    qualityReport,
+                    optimizationInstance
+            );
 
             AlgorithmRecommendationValidator validator = new AlgorithmRecommendationValidator(algorithmCatalog);
 
