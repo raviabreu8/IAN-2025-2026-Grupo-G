@@ -3,7 +3,6 @@ package pt.iscte.ian;
 public class App {
     public static void main(String[] args) {
         System.out.println("Aplicação IAN iniciada.");
-        System.out.println("A pedir recomendação de algoritmo ao LLM...");
 
         try {
             ApplicationConfigLoader configLoader = new ApplicationConfigLoader();
@@ -11,6 +10,7 @@ public class App {
 
             System.out.println("Configuração da aplicação carregada:");
             System.out.println(applicationConfig);
+            System.out.println();
 
             DatasetLoader datasetLoader = new DatasetLoader();
             TimetablingDataset dataset = datasetLoader.loadTimetablingDataset();
@@ -18,30 +18,41 @@ public class App {
             System.out.println("Datasets carregados com sucesso.");
             System.out.println("Número de salas: " + dataset.getRooms().size());
             System.out.println("Número de entradas de horário: " + dataset.getScheduleEntries().size());
+            System.out.println();
 
+            
             System.out.println("Primeira sala carregada:");
             System.out.println(dataset.getRooms().get(0));
+            System.out.println();
+
 
             System.out.println("Primeira entrada de horário carregada:");
             System.out.println(dataset.getScheduleEntries().get(0));
+            System.out.println();
 
             DatasetQualityAnalyzer qualityAnalyzer = new DatasetQualityAnalyzer();
             DatasetQualityReport qualityReport = qualityAnalyzer.analyze(dataset);
 
             System.out.println("Resumo de qualidade dos datasets:");
             System.out.println(qualityReport);
+            System.out.println();
+
 
             TimetablingSolutionEvaluator timetablingSolutionEvaluator = new TimetablingSolutionEvaluator();
             TimetablingSolutionEvaluation timetablingEvaluation = timetablingSolutionEvaluator.evaluate(dataset);
 
             System.out.println("Avaliação do horário atual:");
             System.out.println(timetablingEvaluation);
+            System.out.println();
+
 
             RoomFeatureAnalyzer roomFeatureAnalyzer = new RoomFeatureAnalyzer();
             RoomFeatureAnalysisReport roomFeatureReport = roomFeatureAnalyzer.analyze(dataset);
 
             System.out.println("Análise de compatibilidade das características das salas:");
             System.out.println(roomFeatureReport);
+            System.out.println();
+
 
             TimetablingOptimizationInstanceBuilder instanceBuilder = new TimetablingOptimizationInstanceBuilder();
 
@@ -52,13 +63,15 @@ public class App {
 
             System.out.println("Instância simplificada de otimização criada:");
             System.out.println(optimizationInstance);
+            System.out.println();
+
 
             System.out.println("Número de variáveis futuras no problema JMetal: "
                     + optimizationInstance.getNumberOfVariables());
 
             System.out.println("Número de salas candidatas: "
                     + optimizationInstance.getNumberOfCandidateRooms());
-            
+            System.out.println();
             TimetablingAssignmentEvaluator assignmentEvaluator =
                     new TimetablingAssignmentEvaluator(dataset, optimizationInstance);
 
@@ -73,6 +86,7 @@ public class App {
 
             System.out.println("Avaliação da atribuição original nas entradas otimizadas:");
             System.out.println(originalAssignmentEvaluation);
+            System.out.println();
 
             GreedyTimetablingAssignmentBuilder greedyAssignmentBuilder = new GreedyTimetablingAssignmentBuilder();
             TimetablingAssignment greedyAssignment = greedyAssignmentBuilder.build(optimizationInstance);
@@ -82,19 +96,7 @@ public class App {
 
             System.out.println("Avaliação da atribuição greedy inicial:");
             System.out.println(assignmentEvaluation);
-
-            TimetablingRoomAssignmentProblem timetablingProblem =
-            new TimetablingRoomAssignmentProblem(dataset, optimizationInstance);
-
-            var randomSolution = timetablingProblem.createSolution();
-            timetablingProblem.evaluate(randomSolution);
-
-            System.out.println("Problema JMetal simplificado criado:");
-            System.out.println("Nome do problema: " + timetablingProblem.name());
-            System.out.println("Número de variáveis: " + timetablingProblem.numberOfVariables());
-            System.out.println("Número de objetivos: " + timetablingProblem.numberOfObjectives());
-            System.out.println("Avaliação de uma solução aleatória:");
-            System.out.println("Objetivo único - penalização total: " + randomSolution.objectives()[0]);
+            System.out.println();
 
             OllamaClient ollamaClient = new OllamaClient(
                     applicationConfig.getOllamaApiUrl(),
@@ -117,11 +119,15 @@ public class App {
 
             AlgorithmRecommendationValidator validator = new AlgorithmRecommendationValidator(algorithmCatalog);
 
+            System.out.println("A pedir recomendação de algoritmo ao LLM...");
+            System.out.println();
+
             String llmResponse = ollamaClient.generateResponse(systemPrompt, algorithmRecommendationPrompt);
             String finalLlmResponse = llmResponse;
 
             System.out.println("Resposta JSON do LLM:");
             System.out.println(llmResponse);
+            System.out.println();
 
             AlgorithmConfiguration config = null;
 
@@ -169,6 +175,7 @@ public class App {
             System.out.println("Resposta validada com sucesso.");
             System.out.println("Configuração criada:");
             System.out.println(config);
+            System.out.println();
 
             OptimizationRunner runner = new OptimizationRunner();
             OptimizationResult result = runner.execute(
@@ -188,9 +195,13 @@ public class App {
 
             System.out.println("Avaliação do horário completo após aplicação da solução NSGA-II:");
             System.out.println(optimizedTimetablingEvaluation);
+            System.out.println();
+
 
             System.out.println("Resultado final da execução:");
             System.out.println(result);
+            System.out.println();
+
 
             ExecutionReportWriter reportWriter = new ExecutionReportWriter();
             reportWriter.write(

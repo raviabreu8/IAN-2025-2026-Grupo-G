@@ -16,6 +16,7 @@ public class JMetalTimetablingNsgaIIRunner {
             TimetablingOptimizationInstance instance
     ) {
         System.out.println("A executar NSGA-II real com JMetal no problema simplificado de timetabling...");
+        System.out.println();
 
         TimetablingRoomAssignmentProblem problem = new TimetablingRoomAssignmentProblem(
                 dataset,
@@ -58,6 +59,7 @@ public class JMetalTimetablingNsgaIIRunner {
                             " -> penalização = " + solution.objectives()[0]
             );
         }
+        System.out.println(); //coonfirmar
 
         IntegerSolution bestPenaltySolution = result.stream()
                 .min((s1, s2) -> Double.compare(s1.objectives()[0], s2.objectives()[0]))
@@ -88,6 +90,8 @@ public class JMetalTimetablingNsgaIIRunner {
 
             System.out.println("Avaliação da melhor solução NSGA-II:");
             System.out.println(bestPenaltyEvaluation);
+            System.out.println();
+
         }
 
         return new OptimizationResult(

@@ -7,7 +7,7 @@ public class OptimizationRunner {
             TimetablingDataset dataset,
             TimetablingOptimizationInstance optimizationInstance
     ) {
-        System.out.println("A preparar execução do algoritmo...");
+        System.out.println("A delegar a tarefa para o algoritmo certo...");
 
         return switch (config.getAlgorithm()) {
             case "NSGA-II" -> executeNsgaII(config, dataset, optimizationInstance);
@@ -24,8 +24,9 @@ public class OptimizationRunner {
             TimetablingDataset dataset,
             TimetablingOptimizationInstance optimizationInstance
     ) {
-        System.out.println("A executar o algoritmo NSGA-II com JMetal.");
+        System.out.println("A preparar execução do algoritmo NSGA-II com JMetal.");
         printConfiguration(config);
+        System.out.println();
 
         JMetalTimetablingNsgaIIRunner runner = new JMetalTimetablingNsgaIIRunner();
 
@@ -39,6 +40,7 @@ public class OptimizationRunner {
     private OptimizationResult executeNsgaIII(AlgorithmConfiguration config) {
         System.out.println("NSGA-III ainda não está implementado com JMetal neste protótipo.");
         printConfiguration(config);
+        System.out.println();
 
         return new OptimizationResult(
                 config.getAlgorithm(),
@@ -50,6 +52,7 @@ public class OptimizationRunner {
     private OptimizationResult executeMoead(AlgorithmConfiguration config) {
         System.out.println("MOEA/D ainda não está implementado com JMetal neste protótipo.");
         printConfiguration(config);
+        System.out.println();
 
         return new OptimizationResult(
                 config.getAlgorithm(),
