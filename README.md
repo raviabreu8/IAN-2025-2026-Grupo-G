@@ -230,7 +230,6 @@ Funcionalidades implementadas:
 
 ```text
 docs/protocolo_llm.md
-docs/arquitetura.md
 ```
 
 O ficheiro `protocolo_llm.md` é o documento principal para explicar ao professor o modelo de comunicação entre a aplicação e o LLM.
