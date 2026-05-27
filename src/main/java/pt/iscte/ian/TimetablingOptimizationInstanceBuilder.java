@@ -2,7 +2,7 @@ package pt.iscte.ian;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class TimetablingOptimizationInstanceBuilder {
@@ -13,15 +13,20 @@ public class TimetablingOptimizationInstanceBuilder {
             TimetablingDataset dataset,
             int maxEntriesForOptimization
     ) {
-        Set<String> knownRoomNames = dataset.getRooms()
+        Map<String, Room> roomsByName = dataset.getRooms()
                 .stream()
-                .map(Room::getName)
-                .collect(Collectors.toSet());
+                .collect(Collectors.toMap(
+                        Room::getName,
+                        room -> room,
+                        (first, second) -> first
+                ));
 
         List<ScheduleEntry> problematicEntries = dataset.getScheduleEntries()
                 .stream()
-                .filter(entry -> isProblematic(entry, knownRoomNames))
-                .sorted(Comparator.comparingInt(this::problemPriority).reversed())
+                .filter(entry -> isProblematic(entry, roomsByName))
+                .sorted(Comparator.comparingInt(
+                        (ScheduleEntry entry) -> problemPriority(entry, roomsByName)
+                ).reversed())
                 .limit(maxEntriesForOptimization)
                 .toList();
 
@@ -37,36 +42,77 @@ public class TimetablingOptimizationInstanceBuilder {
         );
     }
 
-    private boolean isProblematic(ScheduleEntry entry, Set<String> knownRoomNames) {
+    private boolean isProblematic(
+            ScheduleEntry entry,
+            Map<String, Room> roomsByName
+    ) {
         if (featureMatcher.isNoRoomNeeded(entry.getRequestedRoomFeature())) {
             return false;
         }
 
+        return problemPriority(entry, roomsByName) > 0;
+    }
+
+    private int problemPriority(
+            ScheduleEntry entry,
+            Map<String, Room> roomsByName
+    ) {
+        int priority = 0;
+
         String roomName = entry.getRoomName();
 
         boolean missingRoom = roomName == null || roomName.isBlank();
-        boolean unknownRoom = !missingRoom && !knownRoomNames.contains(roomName);
-        boolean capacityProblem =
-                !missingRoom &&
-                entry.getRoomCapacity() > 0 &&
-                entry.getEnrolledStudents() > entry.getRoomCapacity();
 
-        return missingRoom || unknownRoom || capacityProblem;
-    }
-
-    private int problemPriority(ScheduleEntry entry) {
-        int priority = 0;
-
-        if (entry.getRoomName() == null || entry.getRoomName().isBlank()) {
-            priority += 100;
+        if (missingRoom) {
+            priority += TimetablingPenaltyWeights.MISSING_ROOM_ASSIGNMENT;
+            priority += entry.getEnrolledStudents();
+            return priority;
         }
 
-        if (entry.getEnrolledStudents() > entry.getRoomCapacity()) {
-            priority += 50;
+        Room room = roomsByName.get(roomName);
+
+        boolean unknownRoom = room == null;
+
+        if (unknownRoom) {
+            priority += TimetablingPenaltyWeights.UNKNOWN_ROOM_ASSIGNMENT;
+            priority += entry.getEnrolledStudents();
+            return priority;
         }
 
-        priority += entry.getEnrolledStudents();
+        if (entry.getRoomCapacity() > 0) {
+            int capacityDifference = entry.getRoomCapacity() - entry.getEnrolledStudents();
+
+            if (capacityDifference < 0) {
+                priority += TimetablingPenaltyWeights.CAPACITY_VIOLATION;
+                priority += Math.abs(capacityDifference) * TimetablingPenaltyWeights.CAPACITY_SHORTAGE_PER_SEAT;
+            }
+        }
+
+        if (hasFeatureMismatch(entry, room)) {
+            priority += TimetablingPenaltyWeights.FEATURE_MISMATCH;
+        }
+
+        if (priority > 0) {
+            priority += entry.getEnrolledStudents();
+        }
 
         return priority;
+    }
+
+    private boolean hasFeatureMismatch(
+            ScheduleEntry entry,
+            Room room
+    ) {
+        String requestedFeature = entry.getRequestedRoomFeature();
+
+        if (requestedFeature == null || requestedFeature.isBlank()) {
+            return false;
+        }
+
+        if (featureMatcher.isNoRoomNeeded(requestedFeature)) {
+            return false;
+        }
+
+        return !featureMatcher.matches(requestedFeature, room);
     }
 }
