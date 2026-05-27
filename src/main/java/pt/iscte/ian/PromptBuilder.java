@@ -31,12 +31,13 @@ public class PromptBuilder {
         prompt.append("Descrição detalhada do problema em JSON:\n");
         prompt.append(problemDescriptionJson).append("\n\n");
 
-        prompt.append("Catálogo de algoritmos executáveis nesta versão:\n");
-        prompt.append("- NSGA-II: implementado e executável na aplicação.\n\n");
-
-        prompt.append("Algoritmos que podem ser mencionados apenas como alternativas futuras, mas não devem ser escolhidos como principal:\n");
-        prompt.append("- NSGA-III: não implementado nesta versão.\n");
-        prompt.append("- MOEA/D: não implementado nesta versão.\n\n");
+        prompt.append("Catálogo de algoritmos disponíveis:\n");
+        for(AlgorithmCatalog.AlgorithmInfo algorithm : algorithmCatalog.getAlgorithms()) {
+            prompt.append("- ").append(algorithm.name())
+                    .append(": implementado nesta aplicação? ").append(algorithm.implemented() ? "sim" : "não")
+                    .append(". Descrição: ").append(algorithm.description()).append("\n");
+        }
+        prompt.append("\n");
 
         prompt.append("Dados globais do dataset:\n");
         prompt.append("- Número de salas: ").append(datasetQualityReport.getNumberOfRooms()).append("\n");
@@ -53,10 +54,6 @@ public class PromptBuilder {
         prompt.append("- Logo, o problema tem ").append(optimizationInstance.getEntriesToOptimize().size()).append(" variáveis de decisão.\n");
         prompt.append("- Cada variável representa a escolha de uma sala para uma aula.\n\n");
 
-        prompt.append("Baseline heurística:\n");
-        prompt.append("- Existe uma heurística greedy simples usada como comparação.\n");
-        prompt.append("- O algoritmo recomendado deve tentar superar essa baseline através de busca evolutiva.\n\n");
-
         prompt.append("Regras para recomendação dos parâmetros:\n");
         prompt.append("- Não uses sempre valores genéricos baixos.\n");
         prompt.append("- Ajusta os parâmetros ao tamanho da instância e o contexto do problema.\n");
@@ -66,18 +63,16 @@ public class PromptBuilder {
         prompt.append("Campos obrigatórios da resposta JSON:\n");
         prompt.append("- task: deve ser \"algorithm_recommendation\".\n");
         prompt.append("- problem_type: deve ser \"timetabling_room_assignment\".\n");
-        prompt.append("- recommended_algorithm: algoritmo executável nesta aplicação.\n");
-        prompt.append("- justification: texto curto justificando algoritmo e parâmetros.\n");
+        prompt.append("- recommended_algorithm: algoritmo implementado nesta aplicação.\n");
+        prompt.append("- justification: texto justificando algoritmo e parâmetros.\n");
         prompt.append("- parameters.population_size: inteiro escolhido pelo LLM.\n");
         prompt.append("- parameters.max_evaluations: inteiro escolhido pelo LLM.\n");
         prompt.append("- parameters.crossover_probability: decimal escolhido pelo LLM.\n");
         prompt.append("- parameters.mutation_probability: decimal escolhido pelo LLM.\n");
-        prompt.append("- alternatives: lista de alternativas, ou [] se não houver alternativa relevante.\n\n");
+        prompt.append("- alternatives: lista de alternativas.\n\n");
 
         prompt.append("Importante:\n");
-        prompt.append("- O recommended_algorithm deve ser um algoritmo executável nesta aplicação.\n");
-        prompt.append("- Não menciones conflitos de professores na justificação, porque o dataset não contém professores.\n");
-        prompt.append("- A justificação deve referir que esta versão resolve realocação de salas com horários fixos.\n");
+        prompt.append("- O recommended_algorithm deve ser um algoritmo implementado nesta aplicação.\n");
 
         return prompt.toString();
     }

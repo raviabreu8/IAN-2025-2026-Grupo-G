@@ -11,6 +11,7 @@ public class OptimizationRunner {
 
         return switch (config.getAlgorithm()) {
             case "NSGA-II" -> executeNsgaII(config, dataset, optimizationInstance);
+            case "Genetic Algorithm" -> executeGeneticAlgorithm(config, dataset, optimizationInstance);
             case "NSGA-III" -> executeNsgaIII(config);
             case "MOEA/D" -> executeMoead(config);
             default -> throw new IllegalArgumentException(
@@ -29,6 +30,24 @@ public class OptimizationRunner {
         System.out.println();
 
         JMetalTimetablingNsgaIIRunner runner = new JMetalTimetablingNsgaIIRunner();
+
+        return runner.run(
+                config,
+                dataset,
+                optimizationInstance
+        );
+    }
+
+    private OptimizationResult executeGeneticAlgorithm(
+            AlgorithmConfiguration config,
+            TimetablingDataset dataset,
+            TimetablingOptimizationInstance optimizationInstance
+    ) {
+        System.out.println("A preparar execução do algoritmo Genetic Algorithm com JMetal.");
+        printConfiguration(config);
+        System.out.println();
+
+        JMetalTimetablingGeneticAlgorithmRunner runner = new JMetalTimetablingGeneticAlgorithmRunner();
 
         return runner.run(
                 config,

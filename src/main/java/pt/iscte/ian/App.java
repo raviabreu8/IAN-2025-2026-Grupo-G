@@ -193,7 +193,7 @@ public class App {
             TimetablingSolutionEvaluation optimizedTimetablingEvaluation =
                     timetablingSolutionEvaluator.evaluate(optimizedDataset);
 
-            System.out.println("Avaliação do horário completo após aplicação da solução NSGA-II:");
+            System.out.println("Avaliação do horário completo após aplicação da solução otimizada:");
             System.out.println(optimizedTimetablingEvaluation);
             System.out.println();
 

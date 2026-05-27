@@ -4,11 +4,21 @@
       "name": "NSGA-II",
       "framework": "JMetal 6.1",
       "implemented": true,
-      "description": "Algoritmo multiobjetivo baseado em ordenação não-dominada, adequado para problemas com vários objetivos e restrições.",
+      "description": "Algoritmo multiobjetivo.",
       "suitable_for": [
         "multiobjective_optimization",
         "constrained_optimization",
         "timetabling"
+      ]
+    },
+    {
+      "name": "Genetic Algorithm",
+      "framework": "JMetal 6.1",
+      "implemented": true,
+      "description": "Algoritmo evolutivo de objetivo unico.",
+      "suitable_for": [
+        "single_objective_optimization",
+        "population_based_search"
       ]
     },
     {
