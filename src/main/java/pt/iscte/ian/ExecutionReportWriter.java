@@ -1,7 +1,11 @@
 package pt.iscte.ian;
 
+import com.fasterxml.jackson.core.util.DefaultIndenter;
+import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import java.nio.file.Files;
@@ -16,7 +20,6 @@ public class ExecutionReportWriter {
         AlgorithmConfiguration config,
         OptimizationResult result,
         String finalLlmResponse,
-        String problemDescriptionJson,
         String systemPrompt,
         String algorithmRecommendationPrompt,
         DatasetQualityReport datasetQualityReport,
@@ -34,9 +37,11 @@ public class ExecutionReportWriter {
         report.put("generated_at", LocalDateTime.now().toString());
 
         ObjectNode llmRequestNode = mapper.createObjectNode();
-        llmRequestNode.set("problem_description", mapper.readTree(problemDescriptionJson));
         llmRequestNode.put("system_prompt", systemPrompt);
-        llmRequestNode.put("algorithm_recommendation_prompt", algorithmRecommendationPrompt);
+        llmRequestNode.set(
+                "algorithm_recommendation_prompt_lines",
+                createTextLinesNode(mapper, algorithmRecommendationPrompt)
+        );
         report.set("llm_request", llmRequestNode);
 
         JsonNode llmRecommendationNode = mapper.readTree(finalLlmResponse);
@@ -131,7 +136,9 @@ public class ExecutionReportWriter {
 
         Path lastExecutionFile = outputDirectory.resolve("last_execution.json");
 
-        mapper.writerWithDefaultPrettyPrinter().writeValue(lastExecutionFile.toFile(), report);
+        ObjectWriter prettyWriter = createPrettyWriter();
+
+        prettyWriter.writeValue(lastExecutionFile.toFile(), report);
 
         Path historyDirectory = outputDirectory.resolve("history");
         Files.createDirectories(historyDirectory);
@@ -143,7 +150,7 @@ public class ExecutionReportWriter {
 
         Path historyFile = historyDirectory.resolve("execution_" + timestamp + ".json");
 
-        mapper.writerWithDefaultPrettyPrinter().writeValue(historyFile.toFile(), report);
+        prettyWriter.writeValue(historyFile.toFile(), report);
 
         System.out.println("Relatório de execução guardado em:");
         System.out.println(lastExecutionFile.toAbsolutePath());
@@ -177,5 +184,28 @@ public class ExecutionReportWriter {
         node.put("feature_mismatch_rate", evaluation.getFeatureMismatchRate());
 
         return node;
+    }
+
+    private ArrayNode createTextLinesNode(ObjectMapper mapper, String text) {
+        ArrayNode linesNode = mapper.createArrayNode();
+
+        if (text == null || text.isBlank()) {
+            return linesNode;
+        }
+
+        String[] lines = text.split("\\R", -1);
+
+        for (String line : lines) {
+            linesNode.add(line);
+        }
+
+        return linesNode;
+    }
+
+    private ObjectWriter createPrettyWriter() {
+        DefaultPrettyPrinter prettyPrinter = new DefaultPrettyPrinter();
+        prettyPrinter.indentArraysWith(DefaultIndenter.SYSTEM_LINEFEED_INSTANCE);
+
+        return mapper.writer(prettyPrinter);
     }
 }

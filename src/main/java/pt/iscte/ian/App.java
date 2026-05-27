@@ -208,7 +208,6 @@ public class App {
                                 config,
                                 result,
                                 finalLlmResponse,
-                                problemDescriptionJson,
                                 systemPrompt,
                                 algorithmRecommendationPrompt,
                                 qualityReport,
