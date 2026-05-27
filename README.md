@@ -1,208 +1,149 @@
-# IAN-2025-26-Grupo-G
+# IAN-2025-2026-Grupo-G
 
 ## Projeto
 
-**Uso de LLMs para escolha e configuração de algoritmos de IA na resolução de problemas de otimização**
+**Projeto 2: Uso de LLMs para escolha e configuração de algoritmos de IA na resolução de problemas de otimização**
 
-Este projeto foi desenvolvido no âmbito da unidade curricular **Inteligência Artificial Aplicada ao Negócio (IAN)**.
+Projeto desenvolvido no âmbito da unidade curricular **Inteligência Artificial Aplicada ao Negócio (IAN)**.
 
-## Membros do grupo
+## Membro do grupo
 
-- Ravi Abreu — 134640
+- Ravi Abreu - 134640
 
 ## Objetivo
 
-O objetivo deste projeto é desenvolver uma aplicação que utiliza um **LLM local** para apoiar a escolha e configuração de algoritmos de otimização disponíveis na framework **JMetal 6.1**.
+Esta aplicação demonstra como um LLM local pode apoiar a seleção e configuração de algoritmos de otimização.
 
-A aplicação envia ao LLM uma descrição estruturada de um problema de otimização, neste caso um problema de **timetabling universitário**, e recebe como resposta uma recomendação sobre:
+O caso de estudo implementado é um problema de **timetabling simplificado** com dados reais de salas e horários. A versão atual não altera dias nem horas das aulas; o problema tratado é a **realocação de salas para aulas problemáticas**, procurando minimizar uma penalização ponderada associada a capacidade, conflitos de sala, característica pedida para a sala vs. sala designada  e capacidade desperdiçada.
 
-- algoritmo mais adequado;
-- parâmetros iniciais;
-- justificação da escolha;
-- alternativas consideradas.
+O LLM recomenda o algoritmo e os parâmetros iniciais. A aplicação valida a resposta e executa o algoritmo suportado através da framework **JMetal 6.1**.
 
-Depois de receber a resposta, a aplicação valida automaticamente o JSON devolvido pelo LLM e, se a recomendação for válida, executa dinamicamente o algoritmo correspondente através da framework JMetal.
-
-## Descrição geral do funcionamento
-
-O funcionamento atual da aplicação segue este fluxo:
+## Fluxo da aplicação
 
 ```text
-Descrição do problema em JSON
+Carregamento dos datasets de salas e horários
 ↓
-Catálogo de algoritmos em JSON
+Análise de qualidade do dataset
 ↓
-Construção do prompt
+Construção da instância de otimização
 ↓
-Envio do pedido ao LLM local via Ollama
+Construção do pedido ao LLM
 ↓
-Resposta JSON do LLM
+Envio ao Ollama local via API
 ↓
-Validação da resposta
+Resposta JSON com algoritmo e parâmetros
 ↓
-Criação da configuração do algoritmo
+Validação automática da resposta
 ↓
-Execução do algoritmo através do JMetal
+Execução do algoritmo com JMetal
 ↓
-Geração de relatório JSON com os resultados
+Avaliação e exportação dos resultados
 ```
 
-## Tecnologias utilizadas
+## Tecnologias
 
 - Java 17
 - Maven
 - Ollama
-- Modelo LLM local: `llama3.2:3b`
+- Modelo local configurável, por defeito `llama3.2:3b`
 - JMetal 6.1
-- Jackson Databind
-- GitHub
+- Jackson
+- Apache Commons CSV
 
-## Estrutura do projeto
+## Protocolo com o LLM
 
-```text
-docs/
-  protocolo_llm.md
-
-src/
-  main/
-    java/
-      pt/
-        iscte/
-          ian/
-            App.java
-            OllamaClient.java
-            PromptBuilder.java
-            ProblemDescriptionLoader.java
-            AlgorithmCatalog.java
-            AlgorithmRecommendationValidator.java
-            AlgorithmConfiguration.java
-            OptimizationRunner.java
-            OptimizationResult.java
-            JMetalNsgaIIRunner.java
-            ExecutionReportWriter.java
-
-    resources/
-      problem_description.json
-      algorithm_catalog.json
-
-outputs/
-  last_execution.json
-```
-
-A pasta `outputs/` é gerada automaticamente pela aplicação e está ignorada pelo Git.
-
-## Ficheiros principais
-
-### `problem_description.json`
-
-Contém a descrição estruturada do problema de otimização enviado ao LLM.
-
-Inclui:
-
-- tipo de problema;
-- domínio;
-- objetivos;
-- restrições;
-- framework usada.
-
-Localização:
-
-```text
-src/main/resources/problem_description.json
-```
-
-### `algorithm_catalog.json`
-
-Contém o catálogo de algoritmos conhecidos pela aplicação.
-
-Inclui:
-
-- nome do algoritmo;
-- framework;
-- indicação se está implementado;
-- descrição;
-- tipo de problemas para os quais é adequado.
-
-Localização:
-
-```text
-src/main/resources/algorithm_catalog.json
-```
-
-### `protocolo_llm.md`
-
-Documenta o protocolo de interação entre a aplicação e o LLM, incluindo o formato JSON dos pedidos e respostas.
-
-Localização:
+O protocolo de interação está documentado em:
 
 ```text
 docs/protocolo_llm.md
 ```
 
-## Algoritmos considerados
+Em resumo:
 
-O catálogo inicial inclui:
+- a aplicação envia um `system_prompt` e um `algorithm_recommendation_prompt`;
+- o pedido inclui a descrição do problema em JSON, dados do dataset e dados da instância a otimizar;
+- o LLM deve responder apenas com JSON válido;
+- a resposta é validada antes de ser usada;
+- o pedido e a resposta ficam guardados no relatório de execução.
 
-| Algoritmo | Framework | Implementado na aplicação |
-|---|---|---|
-| NSGA-II | JMetal 6.1 | Sim |
-| NSGA-III | JMetal 6.1 | Não |
-| MOEA/D | JMetal 6.1 | Não |
+## Algoritmos
 
-Nesta versão do protótipo, o algoritmo executado de forma real através do JMetal é o **NSGA-II**.
+O catálogo de algoritmos está em:
 
-Os algoritmos **NSGA-III** e **MOEA/D** estão representados no catálogo, mas ainda não estão implementados no runner da aplicação.
+```text
+src/main/resources/algorithm_catalog.json
+```
 
-## Validação da resposta do LLM
+Estado atual:
 
-A aplicação não confia cegamente na resposta do LLM.
+| Algoritmo | Estado |
+|---|---|
+| NSGA-II | Implementado e executável |
+| NSGA-III | Conhecido, mas não implementado |
+| MOEA/D | Conhecido, mas não implementado |
 
-A resposta só é aceite se cumprir as seguintes condições:
+O LLM pode mencionar NSGA-III e MOEA/D como alternativas futuras, mas o algoritmo principal tem de estar implementado. Atualmente, a execução real é feita com **NSGA-II**.
 
-- estar em JSON válido;
-- conter o campo `recommended_algorithm`;
-- conter o campo `parameters`;
-- recomendar um algoritmo conhecido no catálogo;
-- recomendar um algoritmo implementado na aplicação;
-- incluir `population_size` positivo;
-- incluir `max_evaluations` positivo;
-- incluir `crossover_probability` entre 0 e 1;
-- incluir `mutation_probability` entre 0 e 1.
+## Ficheiros principais
 
-Se a resposta inicial do LLM for inválida, a aplicação envia um novo pedido de correção ao LLM, indicando o erro detetado.
+```text
+src/main/java/pt/iscte/ian/App.java
+```
+
+Ponto de entrada da aplicação.
+
+```text
+src/main/java/pt/iscte/ian/PromptBuilder.java
+```
+
+Constrói os prompts enviados ao LLM.
+
+```text
+src/main/java/pt/iscte/ian/AlgorithmRecommendationValidator.java
+```
+
+Valida a resposta JSON do LLM.
+
+```text
+src/main/java/pt/iscte/ian/JMetalTimetablingNsgaIIRunner.java
+```
+
+Executa o NSGA-II com JMetal.
+
+```text
+src/main/resources/problem_description.json
+```
+
+Descrição formal do problema enviada ao LLM.
+
+```text
+src/main/resources/application_config.json
+```
+
+Configuração do Ollama, modelo local e tamanho da instância de otimização.
 
 ## Pré-requisitos
 
-Antes de executar a aplicação, é necessário ter instalado:
-
 - Java 17
 - Maven
-- Ollama
-- Modelo local `llama3.2:3b`
+- Ollama instalado e em execução
+- Modelo definido em `application_config.json`
 
-## Instalar o modelo LLM local
-
-Caso o modelo ainda não esteja instalado no Ollama, executar:
+Para instalar o modelo usado por defeito:
 
 ```powershell
 ollama pull llama3.2:3b
 ```
 
-Para confirmar se o modelo está disponível:
+Para confirmar os modelos disponíveis:
 
 ```powershell
 ollama list
 ```
 
-Deve aparecer algo semelhante a:
+## Executar
 
-```text
-llama3.2:3b
-```
-
-## Executar a aplicação
-
-Na raiz do projeto, executar:
+Na raiz do projeto:
 
 ```powershell
 mvn clean compile
@@ -214,149 +155,82 @@ Depois:
 mvn exec:java
 ```
 
-## Resultado esperado
+## Saídas geradas
 
-Durante a execução, a aplicação deverá:
-
-1. iniciar a aplicação Java;
-2. carregar a descrição do problema;
-3. carregar o catálogo de algoritmos;
-4. enviar o pedido ao LLM local;
-5. receber uma recomendação em JSON;
-6. validar a resposta;
-7. criar a configuração do algoritmo;
-8. executar o algoritmo recomendado, caso esteja implementado;
-9. guardar um relatório final em JSON.
-
-Exemplo de saída esperada:
-
-```text
-Aplicação IAN iniciada.
-A pedir recomendação de algoritmo ao LLM...
-Resposta JSON do LLM:
-{
-  "task": "algorithm_recommendation",
-  "problem_type": "timetabling",
-  "recommended_algorithm": "NSGA-II",
-  ...
-}
-
-Resposta validada com sucesso.
-Configuração criada:
-AlgorithmConfiguration{algorithm='NSGA-II', populationSize=100, maxEvaluations=25000, crossoverProbability=0.9, mutationProbability=0.01}
-
-A preparar execução do algoritmo...
-A executar o algoritmo NSGA-II com JMetal.
-NSGA-II terminou a execução.
-
-Resultado final da execução:
-OptimizationResult{algorithm='NSGA-II', executionTimeMs=..., numberOfSolutions=...}
-```
-
-## Relatório gerado
-
-Após a execução, é criado automaticamente o ficheiro:
+A aplicação gera ficheiros na pasta `outputs/`:
 
 ```text
 outputs/last_execution.json
+outputs/history/
+outputs/optimized_assignment.csv
+outputs/optimized_schedule_simplified.csv
 ```
 
-Este ficheiro contém:
+O relatório JSON inclui:
 
-- data/hora da execução;
-- resposta final do LLM;
-- algoritmo recomendado;
-- parâmetros utilizados;
-- tempo de execução;
-- número de soluções obtidas.
+- pedido enviado ao LLM (`llm_request`);
+- resposta validada do LLM (`llm_recommendation`);
+- qualidade do dataset;
+- avaliação do horário original;
+- avaliação do horário após aplicação da solução;
+- baseline original;
+- baseline greedy;
+- configuração escolhida;
+- resultado da execução do NSGA-II.
 
-Exemplo da estrutura:
+## Configuração
+
+O ficheiro principal de configuração é:
+
+```text
+src/main/resources/application_config.json
+```
+
+Exemplo:
 
 ```json
 {
-  "generated_at": "2026-05-15T00:00:00",
-  "llm_recommendation": {
-    "task": "algorithm_recommendation",
-    "problem_type": "timetabling",
-    "recommended_algorithm": "NSGA-II",
-    "justification": "..."
+  "ollama": {
+    "api_url": "http://localhost:11434/api/generate",
+    "model": "llama3.2:3b"
   },
-  "configuration": {
-    "algorithm": "NSGA-II",
-    "population_size": 100,
-    "max_evaluations": 25000,
-    "crossover_probability": 0.9,
-    "mutation_probability": 0.01
+  "execution": {
+    "max_correction_attempts": 1
   },
-  "result": {
-    "algorithm": "NSGA-II",
-    "execution_time_ms": 878,
-    "number_of_solutions": 98
+  "timetabling": {
+    "max_entries_for_optimization": 50
   }
 }
 ```
 
-## Estado atual do projeto
+## Estado atual
 
-Funcionalidades já implementadas:
+Funcionalidades implementadas:
 
-- instalação e teste do Ollama;
-- uso de LLM local;
-- comunicação com o Ollama através da API local;
-- construção de prompts;
-- descrição do problema em JSON;
-- catálogo de algoritmos em JSON;
-- resposta do LLM em JSON;
-- validação automática da resposta do LLM;
-- mecanismo de correção caso a resposta seja inválida;
-- criação de configuração Java a partir da resposta validada;
-- execução real do NSGA-II através do JMetal;
-- geração de relatório JSON com o resultado final.
+- carregamento dos datasets reais de salas e horários;
+- análise de qualidade do dataset;
+- construção de instância de otimização;
+- comunicação com LLM local através da API do Ollama;
+- protocolo de pedido/resposta documentado;
+- resposta JSON validada automaticamente;
+- mecanismo de correção de resposta inválida;
+- execução real do NSGA-II com JMetal;
+- comparação com baseline original e greedy;
+- geração de relatório JSON;
+- exportação de soluções otimizadas para CSV.
 
-## Limitações atuais
+## Limitações
 
-Nesta versão do protótipo:
+- Apenas o NSGA-II está implementado para execução real.
+- O problema atual é uma versão simplificada: realocação de salas com horários fixos.
+- O dataset não contém docentes, por isso conflitos de professores não são otimizados.
+- A aplicação funciona por consola.
 
-- apenas o algoritmo NSGA-II está implementado para execução real;
-- o problema executado no JMetal ainda é um problema de teste, baseado em ZDT1;
-- a integração com o dataset real de horários/salas do ISCTE ainda não está concluída;
-- ainda não existe interface gráfica;
-- o projeto ainda funciona como aplicação de consola.
+## Documentação
 
-## Trabalho futuro
-
-Possíveis melhorias futuras:
-
-- implementar runners para NSGA-III e MOEA/D;
-- integrar o dataset real de salas e horários do ISCTE;
-- criar uma representação computacional específica para o problema de timetabling;
-- adicionar uma interface gráfica ou API REST;
-- guardar histórico de execuções;
-- comparar resultados entre algoritmos diferentes;
-- permitir que o utilizador escolha o problema ou os objetivos a considerar.
-
-## Comandos úteis
-
-Compilar o projeto:
-
-```powershell
-mvn clean compile
+```text
+docs/protocolo_llm.md
+docs/arquitetura.md
 ```
 
-Executar o projeto:
-
-```powershell
-mvn exec:java
-```
-
-Verificar modelos instalados no Ollama:
-
-```powershell
-ollama list
-```
-
-Instalar o modelo usado no projeto:
-
-```powershell
-ollama pull llama3.2:3b
-```
+O ficheiro `protocolo_llm.md` é o documento principal para explicar ao professor o modelo de comunicação entre a aplicação e o LLM.
