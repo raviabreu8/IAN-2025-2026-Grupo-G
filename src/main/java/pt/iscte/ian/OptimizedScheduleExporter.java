@@ -78,7 +78,7 @@ public class OptimizedScheduleExporter {
                         ? optimizedRoom
                         : roomsByName.get(entry.getRoomName());
 
-                String assignmentSource = optimized ? "NSGA-II" : "ORIGINAL";
+                String assignmentSource = optimized ? result.getAlgorithm() : "ORIGINAL";
 
                 String assignedRoomName = assignedRoom != null
                         ? assignedRoom.getName()
