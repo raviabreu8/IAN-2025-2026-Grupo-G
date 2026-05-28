@@ -1,7 +1,7 @@
 {
   "ollama": {
     "api_url": "http://localhost:11434/api/generate",
-    "model": "llama3.2:3b"
+    "model": "phi4-mini:3.8b-q4_K_M"
   },
   "execution": {
     "max_correction_attempts": 1

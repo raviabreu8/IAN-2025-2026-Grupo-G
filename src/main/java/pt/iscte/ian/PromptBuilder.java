@@ -55,7 +55,6 @@ public class PromptBuilder {
         prompt.append("- Cada variável representa a escolha de uma sala para uma aula.\n\n");
 
         prompt.append("Regras para recomendação dos parâmetros:\n");
-        prompt.append("- Não uses sempre valores genéricos baixos.\n");
         prompt.append("- Ajusta os parâmetros ao tamanho da instância e o contexto do problema.\n");
         prompt.append("- Os parâmetros devem equilibrar qualidade da solução e tempo de execução local.\n\n");
 

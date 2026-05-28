@@ -12,7 +12,7 @@ O projeto usa o LLM como apoio à escolha e configuração de algoritmos de otim
 - Modelo configurável em `src/main/resources/application_config.json`.
 - API usada: endpoint local configurado em `ollama.api_url`.
 - Framework de otimização: JMetal 6.1.
-- Algoritmo executável nesta versão: NSGA-II.
+- Algoritmo executável nesta versão: NSGA-II e Genetic Algorithm.
 
 ## Problema de otimização
 
@@ -65,12 +65,12 @@ src/main/resources/algorithm_catalog.json
 ```
 
 Neste momento contém:
-
 - `NSGA-II`: conhecido e implementado;
+- `Genetic Algorithm`: conhecido e implementado;
 - `NSGA-III`: conhecido, mas não implementado;
 - `MOEA/D`: conhecido, mas não implementado.
 
-O LLM pode mencionar NSGA-III e MOEA/D como alternativas futuras, mas o algoritmo principal recomendado tem de estar implementado. Atualmente, só `NSGA-II` pode ser executado.
+O LLM pode mencionar NSGA-III e MOEA/D como alternativas futuras, mas o algoritmo principal recomendado tem de estar implementado. Atualmente, só `NSGA-II` e `Genetic Algorithm` podem ser executados.
 
 ## Resposta esperada do LLM
 
@@ -113,6 +113,7 @@ Depois da validação, a resposta do LLM é convertida numa `AlgorithmConfigurat
 Na versão atual:
 
 - `NSGA-II` é executado com JMetal;
+- `Genetic Algorithm` é executado com JMetal;
 - `NSGA-III` e `MOEA/D` são reconhecidos, mas não são executáveis nesta implementação.
 
 ## Registo dos resultados

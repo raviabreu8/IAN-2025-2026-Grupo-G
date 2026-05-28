@@ -45,7 +45,7 @@ Avaliação e exportação dos resultados
 - Java 17
 - Maven
 - Ollama
-- Modelo local configurável, por defeito `llama3.2:3b`
+- Modelo local configurável, por defeito `phi4-mini:3.8b-q4_K_M`
 - JMetal 6.1
 - Jackson
 - Apache Commons CSV
@@ -132,7 +132,7 @@ Configuração do Ollama, modelo local e tamanho da instância de otimização.
 Para instalar o modelo usado por defeito:
 
 ```powershell
-ollama pull llama3.2:3b
+ollama pull phi4-mini:3.8b-q4_K_M
 ```
 
 Para confirmar os modelos disponíveis:
@@ -192,7 +192,7 @@ Exemplo:
 {
   "ollama": {
     "api_url": "http://localhost:11434/api/generate",
-    "model": "llama3.2:3b"
+    "model": "phi4-mini:3.8b-q4_K_M"
   },
   "execution": {
     "max_correction_attempts": 1
