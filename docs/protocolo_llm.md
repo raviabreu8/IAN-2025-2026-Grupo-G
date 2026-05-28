@@ -50,7 +50,6 @@ Para efeitos de auditoria, cada execução guarda o pedido completo no relatóri
 
 ```json
 "llm_request": {
-  "problem_description": { },
   "system_prompt": "...",
   "algorithm_recommendation_prompt": "..."
 }
@@ -135,6 +134,6 @@ O relatório inclui:
 - baseline original;
 - baseline greedy;
 - configuração escolhida;
-- resultado da execução do NSGA-II.
+- resultado da execução do algoritmo escolhido.
 
 Assim, a execução fica rastreável: é possível ver o que foi enviado ao LLM, o que foi recomendado, como a resposta foi validada e que resultado foi obtido.

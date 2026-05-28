@@ -79,10 +79,11 @@ Estado atual:
 | Algoritmo | Estado |
 |---|---|
 | NSGA-II | Implementado e executável |
+| Genetic Algorithm | Implementado e executável |
 | NSGA-III | Conhecido, mas não implementado |
 | MOEA/D | Conhecido, mas não implementado |
 
-O LLM pode mencionar NSGA-III e MOEA/D como alternativas futuras, mas o algoritmo principal tem de estar implementado. Atualmente, a execução real é feita com **NSGA-II**.
+O LLM pode mencionar NSGA-III e MOEA/D como alternativas futuras, mas o algoritmo principal tem de estar implementado. Atualmente, a execução real pode ser feita com **NSGA-II** ou **Genetic Algorithm**.
 
 ## Ficheiros principais
 
@@ -109,6 +110,12 @@ src/main/java/pt/iscte/ian/JMetalTimetablingNsgaIIRunner.java
 ```
 
 Executa o NSGA-II com JMetal.
+
+```text
+src/main/java/pt/iscte/ian/JMetalTimetablingGeneticAlgorithmRunner.java
+```
+
+Executa o Genetic Algorithm com JMetal.
 
 ```text
 src/main/resources/problem_description.json
@@ -162,7 +169,7 @@ A aplicação gera ficheiros na pasta `outputs/`:
 ```text
 outputs/last_execution.json
 outputs/history/
-outputs/optimized_assignment.csv
+outputs/optimized_assignments.csv
 outputs/optimized_schedule_simplified.csv
 ```
 
@@ -176,7 +183,7 @@ O relatório JSON inclui:
 - baseline original;
 - baseline greedy;
 - configuração escolhida;
-- resultado da execução do NSGA-II.
+- resultado da execução do algoritmo escolhido.
 
 ## Configuração
 
@@ -214,14 +221,14 @@ Funcionalidades implementadas:
 - protocolo de pedido/resposta documentado;
 - resposta JSON validada automaticamente;
 - mecanismo de correção de resposta inválida;
-- execução real do NSGA-II com JMetal;
+- execução real do NSGA-II e do Genetic Algorithm com JMetal;
 - comparação com baseline original e greedy;
 - geração de relatório JSON;
 - exportação de soluções otimizadas para CSV.
 
 ## Limitações
 
-- Apenas o NSGA-II está implementado para execução real.
+- Apenas o NSGA-II e Genetic Algorithm estão implementados para execução real.
 - O problema atual é uma versão simplificada: realocação de salas com horários fixos.
 - O dataset não contém docentes, por isso conflitos de professores não são otimizados.
 - A aplicação funciona por consola.
@@ -230,6 +237,9 @@ Funcionalidades implementadas:
 
 ```text
 docs/protocolo_llm.md
+docs/arquitetura.md
 ```
 
 O ficheiro `protocolo_llm.md` é o documento principal para explicar ao professor o modelo de comunicação entre a aplicação e o LLM.
+
+O ficheiro `arquitetura.md` é o documento principal para explicar ao professor o fluxo interno da aplicação.

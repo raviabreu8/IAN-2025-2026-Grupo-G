@@ -7,6 +7,6 @@
     "max_correction_attempts": 1
   },
   "timetabling": {
-    "max_entries_for_optimization": 100
+    "max_entries_for_optimization": 200
   }
 }
