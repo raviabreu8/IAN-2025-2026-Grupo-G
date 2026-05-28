@@ -8,8 +8,23 @@ import org.uma.jmetal.solution.integersolution.IntegerSolution;
 
 import java.util.List;
 
+/**
+ * Executa o NSGA-II do JMetal para o problema simplificado de timetabling.
+ *
+ * <p>Este runner cria a formulacao JMetal, executa o NSGA-II com os parametros
+ * recomendados pelo LLM e seleciona a solucao com menor penalizacao para ser
+ * aplicada e registada no resultado da execucao.</p>
+ */
 public class JMetalTimetablingNsgaIIRunner {
 
+    /**
+     * Executa o NSGA-II com os parametros recebidos.
+     *
+     * @param config configuracao validada com algoritmo e parametros
+     * @param dataset dataset completo de salas e horarios
+     * @param instance instancia simplificada com as aulas a otimizar
+     * @return resultado da execucao, incluindo melhor penalizacao e atribuicao encontrada
+     */
     public OptimizationResult run(
             AlgorithmConfiguration config,
             TimetablingDataset dataset,

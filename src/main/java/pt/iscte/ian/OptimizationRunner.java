@@ -1,7 +1,22 @@
 package pt.iscte.ian;
 
+/**
+ * Encaminha a execucao para o algoritmo de otimizacao escolhido pelo LLM.
+ *
+ * <p>Depois de a resposta do LLM ser validada e convertida numa
+ * {@link AlgorithmConfiguration}, esta classe seleciona o runner correspondente
+ * e executa o algoritmo com JMetal sobre a instancia de timetabling.</p>
+ */
 public class OptimizationRunner {
 
+    /**
+     * Executa o algoritmo indicado na configuracao recebida.
+     *
+     * @param config configuracao validada com o algoritmo e os parametros recomendados
+     * @param dataset dataset completo de salas e horarios
+     * @param optimizationInstance instancia simplificada a otimizar
+     * @return resultado da execucao do algoritmo escolhido
+     */
     public OptimizationResult execute(
             AlgorithmConfiguration config,
             TimetablingDataset dataset,

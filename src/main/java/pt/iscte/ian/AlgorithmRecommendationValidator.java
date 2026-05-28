@@ -3,14 +3,37 @@ package pt.iscte.ian;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+/**
+ * Valida a recomendacao JSON produzida pelo LLM e converte-a numa configuracao executavel.
+ *
+ * <p>Esta classe garante que a resposta contem os campos obrigatorios, que o algoritmo
+ * recomendado existe no catalogo, que esta implementado na aplicacao e que os parametros
+ * numericos recebidos podem ser usados com seguranca pela execucao JMetal.</p>
+ */
 public class AlgorithmRecommendationValidator {
 
     private final AlgorithmCatalog algorithmCatalog;
 
+    /**
+     * Cria um validador associado ao catalogo de algoritmos da aplicacao.
+     *
+     * @param algorithmCatalog catalogo usado para verificar se o algoritmo existe e se esta implementado
+     */
     public AlgorithmRecommendationValidator(AlgorithmCatalog algorithmCatalog) {
         this.algorithmCatalog = algorithmCatalog;
     }
 
+    /**
+     * Valida a resposta do LLM e cria uma configuracao de algoritmo.
+     *
+     * <p>A resposta deve ser JSON valido, conter o campo {@code recommended_algorithm}
+     * e o objeto {@code parameters}, incluindo tamanho da populacao, numero maximo
+     * de avaliacoes e probabilidades de cruzamento e mutacao.</p>
+     *
+     * @param llmResponse resposta JSON devolvida pelo LLM
+     * @return configuracao validada para execucao do algoritmo recomendado
+     * @throws Exception se o JSON for invalido, se faltar algum campo obrigatorio ou se algum valor nao puder ser aceite
+     */
     public AlgorithmConfiguration validateAndCreateConfiguration(String llmResponse) throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode recommendation = mapper.readTree(llmResponse);

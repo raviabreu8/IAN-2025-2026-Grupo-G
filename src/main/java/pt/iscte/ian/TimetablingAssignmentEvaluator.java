@@ -11,6 +11,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * Avalia uma atribuicao de salas para as entradas selecionadas para otimizacao.
+ *
+ * <p>Esta classe calcula as metricas usadas como penalizacao no problema:
+ * atribuicoes invalidas, violacoes de capacidade, lugares em falta, conflitos
+ * temporais de sala, incompatibilidades de caracteristicas e capacidade
+ * desperdicada.</p>
+ */
 public class TimetablingAssignmentEvaluator {
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
@@ -20,6 +28,16 @@ public class TimetablingAssignmentEvaluator {
     private final Map<String, List<ScheduleInterval>> fixedRoomOccupancy;
     private final RoomFeatureMatcher featureMatcher = new RoomFeatureMatcher();
 
+    /**
+     * Cria um avaliador para uma instancia de otimizacao.
+     *
+     * <p>O avaliador guarda tambem a ocupacao fixa das salas no horario completo,
+     * excluindo as entradas que vao ser otimizadas, para conseguir detetar conflitos
+     * entre a nova atribuicao e o horario que permanece inalterado.</p>
+     *
+     * @param dataset dataset completo de salas e horarios
+     * @param instance instancia com as entradas a otimizar e as salas candidatas
+     */
     public TimetablingAssignmentEvaluator(
             TimetablingDataset dataset,
             TimetablingOptimizationInstance instance
@@ -29,6 +47,12 @@ public class TimetablingAssignmentEvaluator {
         this.fixedRoomOccupancy = buildFixedRoomOccupancy(dataset, entriesToOptimize);
     }
 
+    /**
+     * Avalia uma atribuicao candidata e calcula a respetiva penalizacao total.
+     *
+     * @param assignment atribuicao de indices de salas para as entradas otimizadas
+     * @return avaliacao detalhada da atribuicao recebida
+     */
     public TimetablingAssignmentEvaluation evaluate(TimetablingAssignment assignment) {
         Map<String, List<ScheduleInterval>> assignedRoomOccupancy = new HashMap<>();
 

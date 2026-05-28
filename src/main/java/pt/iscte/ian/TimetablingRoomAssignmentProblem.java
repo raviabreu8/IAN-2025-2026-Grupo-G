@@ -9,6 +9,14 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+/**
+ * Representa o problema de atribuicao de salas no formato esperado pelo JMetal.
+ *
+ * <p>Cada variavel da solucao corresponde a uma aula problematica da instancia
+ * de otimizacao. O valor da variavel escolhe uma sala dentro de uma lista reduzida
+ * de salas candidatas para essa aula. A formulacao atual tem um unico objetivo:
+ * minimizar a penalizacao total calculada pelo {@link TimetablingAssignmentEvaluator}.</p>
+ */
 @SuppressWarnings("serial")
 public class TimetablingRoomAssignmentProblem implements Problem<IntegerSolution> {
 
@@ -21,6 +29,12 @@ public class TimetablingRoomAssignmentProblem implements Problem<IntegerSolution
     private final List<List<Integer>> candidateRoomIndexesByEntry;
     private final List<Bounds<Integer>> bounds;
 
+    /**
+     * Cria o problema JMetal a partir do dataset completo e da instancia simplificada.
+     *
+     * @param dataset dataset completo com salas e entradas de horario
+     * @param instance instancia com as aulas a otimizar e as salas candidatas
+     */
     public TimetablingRoomAssignmentProblem(
             TimetablingDataset dataset,
             TimetablingOptimizationInstance instance
@@ -38,26 +52,52 @@ public class TimetablingRoomAssignmentProblem implements Problem<IntegerSolution
         System.out.println("Máximo encontrado: " + getMaximumCandidateCount());
     }
 
+    /**
+     * Devolve o numero de variaveis de decisao, ou seja, o numero de aulas a otimizar.
+     *
+     * @return numero de variaveis da solucao
+     */
     @Override
     public int numberOfVariables() {
         return instance.getNumberOfVariables();
     }
 
+    /**
+     * Devolve o numero de objetivos da formulacao atual.
+     *
+     * @return um unico objetivo: minimizar a penalizacao total
+     */
     @Override
     public int numberOfObjectives() {
         return 1;
     }
 
+    /**
+     * Devolve o numero de restricoes explicitas usadas pelo JMetal.
+     *
+     * @return zero, porque as restricoes sao tratadas atraves da funcao de penalizacao
+     */
     @Override
     public int numberOfConstraints() {
         return 0;
     }
 
+    /**
+     * Devolve o nome do problema usado pelo JMetal.
+     *
+     * @return nome da formulacao de timetabling
+     */
     @Override
     public String name() {
         return "TimetablingRoomAssignmentProblem";
     }
 
+    /**
+     * Avalia uma solucao JMetal e atribui-lhe a penalizacao total como objetivo.
+     *
+     * @param solution solucao inteira gerada pelo algoritmo de otimizacao
+     * @return a mesma solucao, com o valor do objetivo atualizado
+     */
     @Override
     public IntegerSolution evaluate(IntegerSolution solution) {
         TimetablingAssignment assignment = decodeSolution(solution);
@@ -68,6 +108,11 @@ public class TimetablingRoomAssignmentProblem implements Problem<IntegerSolution
         return solution;
     }
 
+    /**
+     * Cria uma nova solucao inteira com os limites de escolha de sala por aula.
+     *
+     * @return solucao JMetal inicializada de acordo com os limites definidos
+     */
     @Override
     public IntegerSolution createSolution() {
         return new DefaultIntegerSolution(
@@ -77,6 +122,16 @@ public class TimetablingRoomAssignmentProblem implements Problem<IntegerSolution
         );
     }
 
+    /**
+     * Converte uma solucao JMetal, baseada em indices locais, numa atribuicao real de salas.
+     *
+     * <p>Internamente, cada variavel escolhe uma posicao na lista reduzida de salas
+     * candidatas daquela aula. Este metodo traduz essa escolha para o indice real da
+     * sala na lista global de salas candidatas.</p>
+     *
+     * @param solution solucao inteira produzida por um algoritmo JMetal
+     * @return atribuicao de salas correspondente a solucao recebida
+     */
     public TimetablingAssignment decodeSolution(IntegerSolution solution) {
         int[] realRoomIndexes = new int[numberOfVariables()];
 

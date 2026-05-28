@@ -6,8 +6,23 @@ import org.uma.jmetal.operator.crossover.impl.IntegerSBXCrossover;
 import org.uma.jmetal.operator.mutation.impl.IntegerPolynomialMutation;
 import org.uma.jmetal.solution.integersolution.IntegerSolution;
 
+/**
+ * Executa o Genetic Algorithm do JMetal para o problema simplificado de timetabling.
+ *
+ * <p>Este runner adapta a configuracao recomendada pelo LLM aos construtores do
+ * JMetal, executa o algoritmo e transforma a melhor solucao encontrada num
+ * {@link OptimizationResult} usado pelo resto da aplicacao.</p>
+ */
 public class JMetalTimetablingGeneticAlgorithmRunner {
 
+    /**
+     * Executa o Genetic Algorithm com os parametros recebidos.
+     *
+     * @param config configuracao validada com algoritmo e parametros
+     * @param dataset dataset completo de salas e horarios
+     * @param instance instancia simplificada com as aulas a otimizar
+     * @return resultado da execucao, incluindo melhor penalizacao e atribuicao encontrada
+     */
     public OptimizationResult run(
             AlgorithmConfiguration config,
             TimetablingDataset dataset,

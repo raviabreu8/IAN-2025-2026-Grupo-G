@@ -5,10 +5,25 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * Constroi a instancia simplificada de otimizacao a partir do dataset completo.
+ *
+ * <p>Esta classe seleciona as aulas consideradas problematicas, ordena-as por
+ * prioridade e limita o tamanho da instancia de acordo com a configuracao da
+ * aplicacao. Tambem prepara a lista de salas candidatas que podem ser escolhidas
+ * pelos algoritmos de otimizacao.</p>
+ */
 public class TimetablingOptimizationInstanceBuilder {
 
     private final RoomFeatureMatcher featureMatcher = new RoomFeatureMatcher();
 
+    /**
+     * Cria uma instancia de otimizacao com as entradas mais problematicas do horario.
+     *
+     * @param dataset dataset completo com salas e entradas de horario
+     * @param maxEntriesForOptimization numero maximo de entradas problematicas a incluir na instancia
+     * @return instancia com as entradas a otimizar e as salas candidatas
+     */
     public TimetablingOptimizationInstance build(
             TimetablingDataset dataset,
             int maxEntriesForOptimization

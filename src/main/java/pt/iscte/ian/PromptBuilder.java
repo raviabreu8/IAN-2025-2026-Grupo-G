@@ -1,18 +1,50 @@
 package pt.iscte.ian;
 
+/**
+ * Constroi os prompts usados na comunicacao entre a aplicacao e o LLM.
+ *
+ * <p>Esta classe centraliza as instrucoes enviadas ao modelo: o papel do LLM,
+ * a descricao do problema, o catalogo de algoritmos disponiveis, os dados da
+ * instancia de otimizacao e o formato JSON esperado na resposta.</p>
+ */
 public class PromptBuilder {
 
     private final AlgorithmCatalog algorithmCatalog;
 
+    /**
+     * Cria um construtor de prompts com acesso ao catalogo de algoritmos da aplicacao.
+     *
+     * @param algorithmCatalog catalogo com os algoritmos conhecidos e o respetivo estado de implementacao
+     */
     public PromptBuilder(AlgorithmCatalog algorithmCatalog) {
         this.algorithmCatalog = algorithmCatalog;
     }
 
+    /**
+     * Constroi o prompt de sistema enviado ao LLM.
+     *
+     * <p>Este prompt define o papel geral do modelo e reforca que a resposta deve
+     * ser sempre JSON valido, sem texto adicional fora do JSON.</p>
+     *
+     * @return prompt de sistema para a chamada ao LLM
+     */
     public String buildSystemPrompt() {
         return "És um assistente especializado em algoritmos de otimização disponíveis na framework JMetal 6.1. " +
                 "Responde sempre em JSON válido. Não escrevas texto fora do JSON.";
     }
 
+    /**
+     * Constroi o prompt principal de recomendacao de algoritmo.
+     *
+     * <p>O prompt combina a descricao formal do problema, o catalogo de algoritmos,
+     * estatisticas do dataset e informacao sobre a instancia de otimizacao. O objetivo
+     * e obter do LLM uma recomendacao tratavel automaticamente pela aplicacao.</p>
+     *
+     * @param problemDescriptionJson descricao do problema carregada de {@code problem_description.json}
+     * @param datasetQualityReport resumo de qualidade dos dados usados na execucao
+     * @param optimizationInstance instancia simplificada que sera usada pelo algoritmo de otimizacao
+     * @return prompt principal enviado ao LLM
+     */
    public String buildAlgorithmRecommendationPrompt(
             String problemDescriptionJson,
             DatasetQualityReport datasetQualityReport,
@@ -76,6 +108,17 @@ public class PromptBuilder {
         return prompt.toString();
     }
     
+    /**
+     * Constroi um prompt de correcao quando a resposta anterior do LLM e invalida.
+     *
+     * <p>Este prompt inclui a resposta anterior, o erro encontrado pela validacao e
+     * o catalogo de algoritmos, pedindo ao LLM uma nova resposta que cumpra o contrato
+     * JSON esperado pela aplicacao.</p>
+     *
+     * @param previousResponse resposta anterior produzida pelo LLM
+     * @param validationError erro detetado durante a validacao da resposta
+     * @return prompt de correcao enviado ao LLM
+     */
     public String buildCorrectionPrompt(String previousResponse, String validationError) {
         StringBuilder algorithmsDescription = new StringBuilder();
 

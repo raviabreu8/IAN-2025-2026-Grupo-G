@@ -12,10 +12,34 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 
+/**
+ * Escreve o relatorio JSON de cada execucao da aplicacao.
+ *
+ * <p>O relatorio guarda a informacao enviada ao LLM, a recomendacao recebida,
+ * a configuracao executada, as metricas do dataset, as baselines e o resultado
+ * da otimizacao. Tambem cria uma copia historica para permitir auditoria das
+ * execucoes anteriores.</p>
+ */
 public class ExecutionReportWriter {
 
     private final ObjectMapper mapper = new ObjectMapper();
 
+    /**
+     * Cria e grava o relatorio completo de uma execucao.
+     *
+     * @param config configuracao de algoritmo validada e executada
+     * @param result resultado produzido pelo algoritmo de otimizacao
+     * @param finalLlmResponse resposta final validada do LLM
+     * @param systemPrompt prompt de sistema enviado ao LLM
+     * @param algorithmRecommendationPrompt prompt principal enviado ao LLM
+     * @param datasetQualityReport resumo de qualidade do dataset
+     * @param timetablingEvaluation avaliacao do horario original
+     * @param optimizedTimetablingEvaluation avaliacao do horario apos aplicacao da solucao
+     * @param optimizationInstance instancia de otimizacao usada na execucao
+     * @param originalEvaluation avaliacao da atribuicao original nas entradas otimizadas
+     * @param greedyEvaluation avaliacao da baseline greedy
+     * @throws Exception se ocorrer algum erro ao construir ou escrever os ficheiros JSON
+     */
     public void write(
         AlgorithmConfiguration config,
         OptimizationResult result,
