@@ -190,7 +190,6 @@ public class ExecutionReportWriter {
         ObjectNode node = mapper.createObjectNode();
 
         node.put("total_entries", evaluation.getTotalEntries());
-        node.put("invalid_room_assignments", evaluation.getInvalidRoomAssignments());
         node.put("capacity_violations", evaluation.getCapacityViolations());
         node.put("total_capacity_shortage", evaluation.getTotalCapacityShortage());
         node.put("missing_room_assignments", evaluation.getMissingRoomAssignments());

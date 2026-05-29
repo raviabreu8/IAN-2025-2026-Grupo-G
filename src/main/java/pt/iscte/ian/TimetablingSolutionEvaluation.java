@@ -3,7 +3,6 @@ package pt.iscte.ian;
 public class TimetablingSolutionEvaluation {
 
     private final int totalEntries;
-    private final int invalidRoomAssignments;
     private final int capacityViolations;
     private final int totalCapacityShortage;
     private final int missingRoomAssignments;
@@ -16,7 +15,6 @@ public class TimetablingSolutionEvaluation {
 
     public TimetablingSolutionEvaluation(
             int totalEntries,
-            int invalidRoomAssignments,
             int capacityViolations,
             int totalCapacityShortage,
             int missingRoomAssignments,
@@ -28,7 +26,6 @@ public class TimetablingSolutionEvaluation {
             int totalPenalty
     ) {
         this.totalEntries = totalEntries;
-        this.invalidRoomAssignments = invalidRoomAssignments;
         this.capacityViolations = capacityViolations;
         this.totalCapacityShortage = totalCapacityShortage;
         this.missingRoomAssignments = missingRoomAssignments;
@@ -42,10 +39,6 @@ public class TimetablingSolutionEvaluation {
 
     public int getTotalEntries() {
         return totalEntries;
-    }
-
-    public int getInvalidRoomAssignments() {
-        return invalidRoomAssignments;
     }
 
     public int getCapacityViolations() {
@@ -112,7 +105,6 @@ public class TimetablingSolutionEvaluation {
     public String toString() {
         return "TimetablingSolutionEvaluation{" +
                 "totalEntries=" + totalEntries +
-                ", invalidRoomAssignments=" + invalidRoomAssignments +
                 ", capacityViolations=" + capacityViolations +
                 ", totalCapacityShortage=" + totalCapacityShortage +
                 ", missingRoomAssignments=" + missingRoomAssignments +

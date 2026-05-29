@@ -32,7 +32,6 @@ public class TimetablingSolutionEvaluator {
                 ));
 
         int totalEntries = dataset.getScheduleEntries().size();
-        int invalidRoomAssignments = 0;
         int capacityViolations = 0;
         int totalCapacityShortage = 0;
         int missingRoomAssignments = 0;
@@ -110,7 +109,6 @@ public class TimetablingSolutionEvaluator {
         int classGroupTimeConflicts = countOverlappingIntervals(intervalsByClassGroupAndDate);
 
         int totalPenalty =
-                invalidRoomAssignments * TimetablingPenaltyWeights.INVALID_ROOM_ASSIGNMENT +
                 missingRoomAssignments * TimetablingPenaltyWeights.MISSING_ROOM_ASSIGNMENT +
                 unknownRoomAssignments * TimetablingPenaltyWeights.UNKNOWN_ROOM_ASSIGNMENT +
                 capacityViolations * TimetablingPenaltyWeights.CAPACITY_VIOLATION +
@@ -121,7 +119,6 @@ public class TimetablingSolutionEvaluator {
 
         return new TimetablingSolutionEvaluation(
                 totalEntries,
-                invalidRoomAssignments,
                 capacityViolations,
                 totalCapacityShortage,
                 missingRoomAssignments,
